@@ -549,7 +549,7 @@ $("#veil").addEventListener("click", closeSheet);
     return;
   }
   L = D.lang; document.documentElement.lang = L;
-  const sp = tg?.initDataUnsafe?.start_param || "";
+  const sp = tg?.initDataUnsafe?.start_param || new URLSearchParams(location.search).get("start") || "";
   if (sp === "menu") { renderMenu(); stack = ["home", "menu"]; go("menu", false); try { tg.BackButton.show(); } catch {} }
   else if (sp === "order" && D.joined && !D.active) { renderCafes(); stack = ["home", "cafes"]; go("cafes", false); try { tg.BackButton.show(); } catch {} }
   else go("home", false);
