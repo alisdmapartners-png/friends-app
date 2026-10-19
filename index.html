@@ -1,0 +1,560 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<title>Friends</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#f3e6d3; --cream2:#ead7bd; --paper:#fbf5ec; --brown:#3c2418; --brown2:#5a3a2a; --caramel:#8c4a24;
+  --line:rgba(60,36,24,.12); --muted:rgba(60,36,24,.62); --ok:#3f7a4a; --err:#a5402b;
+  --r:20px; --ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--cream);color:var(--brown);font:500 15px/1.4 Onest,system-ui,sans-serif;overscroll-behavior:none}
+body{min-height:100vh;padding-bottom:calc(24px + env(safe-area-inset-bottom))}
+h1,h2,h3,.nun{font-family:Nunito,system-ui,sans-serif;letter-spacing:-.01em;margin:0}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+.wrap{max-width:560px;margin:0 auto;padding:16px}
+.screen{display:none;animation:in .38s var(--ease) both}
+.screen.on{display:block}
+@keyframes in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.top{display:flex;align-items:center;justify-content:space-between;margin:4px 0 14px}
+.logo{font:900 26px/1 Nunito;letter-spacing:-.02em}
+.langs{display:flex;background:var(--cream2);border-radius:999px;padding:3px}
+.langs button{padding:6px 10px;border-radius:999px;font:700 12px Nunito;color:var(--muted);transition:.2s}
+.langs button.on{background:var(--brown);color:var(--cream)}
+
+/* loyalty card */
+.card{background:var(--brown);color:var(--cream);border-radius:26px;padding:20px 18px 18px;position:relative;overflow:hidden}
+.card .hi{font:800 20px Nunito}
+.card .sub{opacity:.75;font-size:13px;margin-top:2px}
+.cups{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin:18px 0 16px}
+.cup{aspect-ratio:1;border-radius:50%;border:2px dashed rgba(243,230,211,.35);display:grid;place-items:center}
+.cup svg{width:62%;height:62%;opacity:0;transform:scale(.4) rotate(-20deg)}
+.cup.full{border:2px solid var(--cream);background:var(--cream)}
+.cup.full svg{animation:pop .5s var(--ease) forwards}
+.cup.gift{border-style:solid;border-color:rgba(243,230,211,.6)}
+.cup.gift span{font-size:20px}
+@keyframes pop{to{opacity:1;transform:none}}
+.code{display:flex;align-items:center;justify-content:space-between;background:rgba(243,230,211,.1);border-radius:16px;padding:12px 14px}
+.code b{font:900 28px/1 Nunito;letter-spacing:.06em}
+.code small{display:block;opacity:.7;font-size:12px;margin-bottom:4px}
+.code .stamp{font:800 13px Nunito;background:var(--cream);color:var(--brown);border-radius:999px;padding:6px 10px}
+.join{background:var(--paper);border-radius:26px;padding:20px;text-align:center;border:1px solid var(--line)}
+.join p{color:var(--muted);margin:8px 0 16px}
+
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px;border-radius:18px;background:var(--brown);color:var(--cream);font:800 17px Nunito;transition:transform .15s}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:var(--cream2);color:var(--brown)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:14px}
+.tile{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:16px;text-align:left;min-height:118px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .15s}
+.tile:active{transform:scale(.97)}
+.tile .ic{font-size:26px}
+.tile b{font:800 17px Nunito;display:block}
+.tile small{color:var(--muted)}
+.tile.big{grid-column:1/-1;background:var(--caramel);color:var(--cream);border:0;min-height:96px;flex-direction:row;align-items:center}
+.tile.big small{color:rgba(243,230,211,.8)}
+
+/* active order */
+.active{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-top:14px}
+.active .row{display:flex;justify-content:space-between;align-items:baseline}
+.active .row b{font:900 22px Nunito}
+.steps{display:flex;gap:6px;margin:14px 0 6px}
+.steps i{flex:1;height:6px;border-radius:6px;background:var(--cream2);position:relative;overflow:hidden}
+.steps i.on{background:var(--brown)}
+.steps i.now::after{content:"";position:absolute;inset:0;background:var(--caramel);animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.25}50%{opacity:1}}
+.steplbl{display:flex;justify-content:space-between;font-size:12px;color:var(--muted)}
+.link{color:var(--err);font-weight:600;margin-top:10px;font-size:14px}
+
+/* cafés */
+.cafe{display:flex;gap:14px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:12px;width:100%;text-align:left;transition:transform .15s}
+.cafe:active{transform:scale(.98)}
+.cafe .pin{width:52px;height:52px;border-radius:16px;background:var(--cream2);display:grid;place-items:center;font:900 22px Nunito}
+.cafe b{font:800 19px Nunito;display:block}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:middle}
+
+/* menu */
+.mhead{position:sticky;top:0;z-index:5;background:var(--cream);padding:8px 0 10px;margin:0 -16px;padding-left:16px;padding-right:16px}
+.mtitle{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.mtitle h2{font-size:24px}
+.switch{font:700 13px Nunito;background:var(--cream2);border-radius:999px;padding:7px 12px}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:9px 14px;border-radius:999px;background:var(--paper);border:1px solid var(--line);font:700 14px Nunito;white-space:nowrap;transition:.2s}
+.chip.on{background:var(--brown);color:var(--cream);border-color:var(--brown)}
+.closed{background:var(--cream2);border-radius:14px;padding:10px 12px;font-size:13px;margin:6px 0 4px}
+.sect{font:900 20px Nunito;margin:20px 0 10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.item{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;text-align:left;display:flex;flex-direction:column;transition:transform .15s;animation:in .4s var(--ease) both}
+.item:active{transform:scale(.97)}
+.ph{aspect-ratio:1;background:var(--cream2);display:grid;place-items:center;position:relative;overflow:hidden}
+.ph img{width:100%;height:100%;object-fit:cover}
+.ph svg{width:70%;height:70%}
+.ph .q{position:absolute;top:8px;right:8px;background:var(--brown);color:var(--cream);font:800 12px Nunito;min-width:24px;height:24px;border-radius:12px;display:grid;place-items:center;padding:0 7px}
+.item .tx{padding:10px 12px 12px;display:flex;flex-direction:column;gap:3px;flex:1}
+.item b{font:800 15px/1.2 Nunito}
+.item small{color:var(--muted);font-size:12px;line-height:1.3}
+.item .pr{margin-top:auto;padding-top:6px;font:800 14px Nunito;color:var(--caramel)}
+.steam path{animation:steam 2.6s ease-in-out infinite;opacity:0}
+.steam path:nth-child(2){animation-delay:.6s}.steam path:nth-child(3){animation-delay:1.2s}
+@keyframes steam{0%{opacity:0;transform:translateY(6px)}40%{opacity:.7}100%{opacity:0;transform:translateY(-10px)}}
+.bob{animation:bob 3.4s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+
+/* sheet */
+.veil{position:fixed;inset:0;background:rgba(60,36,24,.35);opacity:0;pointer-events:none;transition:opacity .3s;z-index:20}
+.veil.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;background:var(--paper);border-radius:28px 28px 0 0;max-width:560px;margin:0 auto;transform:translateY(105%);transition:transform .38s var(--ease);max-height:92vh;overflow:auto;padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+.sheet.on{transform:none}
+.sheet .ph{aspect-ratio:16/11;border-radius:28px 28px 0 0}
+.sheet .grab{position:absolute;top:8px;left:50%;width:40px;height:5px;border-radius:5px;background:rgba(60,36,24,.25);transform:translateX(-50%);z-index:2}
+.sheet .in{padding:16px}
+.sheet h3{font-size:24px}
+.sheet p{color:var(--muted);margin:6px 0 14px}
+.seg{display:flex;gap:8px;margin-bottom:14px}
+.seg button{flex:1;padding:12px 6px;border-radius:14px;background:var(--cream);border:2px solid transparent;font:800 15px Nunito;transition:.2s}
+.seg button small{display:block;font:600 12px Onest;color:var(--muted)}
+.seg button.on{border-color:var(--brown);background:var(--paper)}
+.qty{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.step{display:flex;align-items:center;gap:4px;background:var(--cream);border-radius:14px;padding:4px}
+.step button{width:40px;height:40px;border-radius:11px;font:900 20px Nunito;background:var(--paper)}
+.step span{min-width:30px;text-align:center;font:900 18px Nunito}
+
+/* cart */
+.line{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.line .ph{width:56px;height:56px;border-radius:14px;flex:none}
+.line .ph svg{width:80%;height:80%}
+.line .nm{flex:1}
+.line .nm b{font:800 15px Nunito;display:block}
+.line .nm small{color:var(--muted)}
+.line .step button{width:32px;height:32px;font-size:17px}
+.line .step span{min-width:22px;font-size:15px}
+.label{font:900 17px Nunito;margin:20px 0 10px}
+.slots{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.slot{padding:12px 4px;border-radius:14px;background:var(--paper);border:1px solid var(--line);font:800 15px Nunito;transition:.2s}
+.slot.on{background:var(--brown);color:var(--cream);border-color:var(--brown)}
+.slot:disabled{opacity:.35;text-decoration:line-through}
+.pay{display:flex;gap:10px}
+.pay button{flex:1;padding:14px;border-radius:16px;background:var(--paper);border:2px solid var(--line);font:800 15px Nunito;text-align:left;transition:.2s}
+.pay button small{display:block;font:500 12px Onest;color:var(--muted);margin-top:2px}
+.pay button.on{border-color:var(--brown)}
+.total{display:flex;justify-content:space-between;align-items:baseline;margin:20px 0 6px;font:900 22px Nunito}
+.note{font-size:13px;color:var(--muted)}
+.empty{text-align:center;padding:50px 10px;color:var(--muted)}
+
+/* success */
+.done{text-align:center;padding:30px 6px}
+.check{width:110px;height:110px;margin:10px auto 18px}
+.check circle{stroke-dasharray:320;stroke-dashoffset:320;animation:draw .7s var(--ease) forwards}
+.check path{stroke-dasharray:80;stroke-dashoffset:80;animation:draw .45s .55s var(--ease) forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.done h2{font-size:28px}
+.done .big{font:900 44px/1 Nunito;letter-spacing:.04em;margin:18px 0 6px}
+.bump{animation:bump .4s var(--ease)}
+@keyframes bump{50%{transform:scale(1.25)}}
+.toast{position:fixed;left:16px;right:16px;top:calc(12px + env(safe-area-inset-top));z-index:40;background:var(--brown);color:var(--cream);border-radius:16px;padding:12px 14px;font-weight:600;transform:translateY(-140%);transition:transform .35s var(--ease);max-width:528px;margin:0 auto}
+.toast.on{transform:none}
+.load{display:grid;place-items:center;min-height:80vh}
+.load svg{width:90px}
+.fallbtn{margin-top:16px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}.cup.full svg{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div id="loading" class="load"><div class="nun" style="text-align:center"><svg viewBox="0 0 80 80" class="bob"><g class="steam" stroke="#8c4a24" stroke-width="3" fill="none" stroke-linecap="round"><path d="M30 18c-4 4 4 6 0 10"/><path d="M40 14c-4 4 4 6 0 10"/><path d="M50 18c-4 4 4 6 0 10"/></g><path d="M18 34h44v14a20 20 0 0 1-20 20h-4a20 20 0 0 1-20-20z" fill="#3c2418"/><path d="M62 38h4a8 8 0 0 1 0 16h-5" stroke="#3c2418" stroke-width="5" fill="none"/></svg><div style="margin-top:8px;font-weight:800">Friends</div></div></div>
+
+  <!-- HOME -->
+  <section id="home" class="screen">
+    <div class="top"><div class="logo">Friends</div><div class="langs" id="langs"></div></div>
+    <div id="cardBox"></div>
+    <div id="activeBox"></div>
+    <div class="tiles" id="tiles"></div>
+  </section>
+
+  <!-- CAFÉ CHOICE -->
+  <section id="cafes" class="screen">
+    <h2 style="font-size:26px;margin:6px 0 16px" id="cafesTitle"></h2>
+    <div id="cafeList"></div>
+  </section>
+
+  <!-- MENU -->
+  <section id="menu" class="screen">
+    <div class="mhead">
+      <div class="mtitle"><h2 id="menuTitle"></h2><button class="switch" id="cafeSwitch"></button></div>
+      <div class="chips" id="chips"></div>
+    </div>
+    <div id="closedNote"></div>
+    <div id="menuBody"></div>
+  </section>
+
+  <!-- CART / CHECKOUT -->
+  <section id="cart" class="screen">
+    <h2 style="font-size:26px;margin:6px 0 4px" id="cartTitle"></h2>
+    <div class="note" id="cartCafe"></div>
+    <div id="cartLines"></div>
+    <div id="checkout"></div>
+  </section>
+
+  <!-- DONE -->
+  <section id="done" class="screen"><div class="done" id="doneBox"></div></section>
+</div>
+
+<div class="veil" id="veil"></div>
+<div class="sheet" id="sheet"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const API = "https://ohuimaecxllehyqfibmg.supabase.co/functions/v1/friends-app";
+const BOT = "https://t.me/friendscofe_bot";
+const tg = window.Telegram?.WebApp;
+const $ = (s) => document.querySelector(s);
+const fmt = (n) => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+
+/* ---------- words ---------- */
+const W = {
+  ru: { hi: n => `Привет${n ? ", " + n : ""}!`, card: "Ваша кофейная карта", left: n => n > 0 ? `До подарка ${n}` : "🎁 Кофе M в подарок!", code: "Покажите код на кассе", stamps: n => `${n}/10`,
+    order: "Заказать заранее", orderSub: "Заберите без очереди", menu: "Меню", menuSub: "Все напитки и цены", bot: "Бот", botSub: "Профиль и визиты",
+    joinT: "Вступите в Friends Club", joinP: "Штамп за каждый напиток, 10-й кофе — в подарок. Два штампа сразу.", join: "📱 Поделиться номером",
+    joined: "Готово! Обновляем карту…", where: "Где заберёте?", open: "Открыто для предзаказа", closedNow: h => `Предзаказ Пн–Сб ${h}`,
+    closedNote: "Сейчас предзаказ закрыт — меню можно посмотреть.", from: "от", add: "Добавить", added: "Добавлено", max: m => `В одном заказе до ${m} напитков`,
+    cartBtn: (n, s) => `Корзина · ${n} · ${s} сум`, yourOrder: "Ваш заказ", pickup: "Когда заберёте?", noSlots: "На сегодня свободного времени больше нет.",
+    pay: "Оплата", payClick: "Click", payClickSub: "Сейчас, в Telegram", payTill: "На кассе", payTillSub: "Когда заберёте", total: "Итого",
+    rule: "Если не заберёте, предзаказ закроется на 7 дней.", placeBtn: s => `Заказать · ${s} сум`, payBtn: s => `Оплатить · ${s} сум`, empty: "Корзина пуста",
+    toMenu: "К меню", sent: "Заказ отправлен!", paid: "Оплачено!", pickAt: t => `Заберите в ${t}`, showCode: c => `На кассе покажите код ${c}`, home: "На главную",
+    st: ["Отправлен", "Принят", "Готов"], waitPay: "Ждём оплату", cancel: "Отменить заказ", cancelled: "Заказ отменён", activeT: "Ваш заказ",
+    ready: "☕ Готов — заберите на кассе", accepted: "Готовим к", sentSt: "Ждём подтверждения кафе", payCancelled: "Оплата не прошла — заказ можно оформить снова",
+    sum: "сум", size: "Размер", qty: "Количество", change: "Сменить",
+    err: { not_joined: "Сначала поделитесь номером", blocked: "Предзаказ временно закрыт: прошлый заказ не забрали", active: "У вас уже есть активный заказ", closed: "Кафе сейчас не принимает предзаказы", slot_gone: "Это время уже занято — выберите другое", too_many: "Слишком много напитков", payment_unavailable: "Оплата Click сейчас недоступна", server: "Что-то пошло не так. Попробуйте ещё раз", unauthorized: "Откройте приложение из бота @friendscofe_bot", net: "Нет связи. Проверьте интернет" } },
+  uz: { hi: n => `Assalomu alaykum${n ? ", " + n : ""}!`, card: "Kofe kartangiz", left: n => n > 0 ? `Sovgʻagacha ${n} ta` : "🎁 Qahva M — sovgʻa!", code: "Kassada kodni koʻrsating", stamps: n => `${n}/10`,
+    order: "Oldindan buyurtma", orderSub: "Navbatsiz olib keting", menu: "Menyu", menuSub: "Barcha ichimliklar va narxlar", bot: "Bot", botSub: "Profil va tashriflar",
+    joinT: "Friends Clubga qoʻshiling", joinP: "Har bir ichimlik uchun shtamp, 10-chi qahva — sovgʻa. Ikkita shtamp darhol.", join: "📱 Raqamni ulashish",
+    joined: "Tayyor! Karta yangilanmoqda…", where: "Qayerdan olib ketasiz?", open: "Oldindan buyurtma ochiq", closedNow: h => `Oldindan buyurtma Du–Sh ${h}`,
+    closedNote: "Hozir oldindan buyurtma yopiq — menyuni koʻrish mumkin.", from: "", add: "Qoʻshish", added: "Qoʻshildi", max: m => `Bir buyurtmada ${m} tagacha ichimlik`,
+    cartBtn: (n, s) => `Savat · ${n} · ${s} soʻm`, yourOrder: "Buyurtmangiz", pickup: "Qachon olib ketasiz?", noSlots: "Bugun boʻsh vaqt qolmadi.",
+    pay: "Toʻlov", payClick: "Click", payClickSub: "Hozir, Telegramda", payTill: "Kassada", payTillSub: "Olib ketayotganda", total: "Jami",
+    rule: "Olib ketmasangiz, oldindan buyurtma 7 kunga yopiladi.", placeBtn: s => `Buyurtma berish · ${s} soʻm`, payBtn: s => `Toʻlash · ${s} soʻm`, empty: "Savat boʻsh",
+    toMenu: "Menyuga", sent: "Buyurtma yuborildi!", paid: "Toʻlandi!", pickAt: t => `${t} da olib keting`, showCode: c => `Kassada ${c} kodini koʻrsating`, home: "Bosh sahifa",
+    st: ["Yuborildi", "Qabul qilindi", "Tayyor"], waitPay: "Toʻlov kutilmoqda", cancel: "Buyurtmani bekor qilish", cancelled: "Buyurtma bekor qilindi", activeT: "Buyurtmangiz",
+    ready: "☕ Tayyor — kassadan oling", accepted: "Tayyorlanmoqda:", sentSt: "Kafe tasdiqlashini kutyapmiz", payCancelled: "Toʻlov oʻtmadi — qaytadan buyurtma berishingiz mumkin",
+    sum: "soʻm", size: "Hajmi", qty: "Soni", change: "Oʻzgartirish",
+    err: { not_joined: "Avval raqamingizni ulashing", blocked: "Oldindan buyurtma vaqtincha yopiq: oxirgi buyurtma olib ketilmagan", active: "Sizda faol buyurtma bor", closed: "Kafe hozir oldindan buyurtma qabul qilmaydi", slot_gone: "Bu vaqt band — boshqasini tanlang", too_many: "Ichimliklar juda koʻp", payment_unavailable: "Click toʻlovi hozir ishlamayapti", server: "Xatolik yuz berdi. Qaytadan urinib koʻring", unauthorized: "Ilovani @friendscofe_bot orqali oching", net: "Aloqa yoʻq. Internetni tekshiring" } },
+  en: { hi: n => `Hello${n ? ", " + n : ""}!`, card: "Your coffee card", left: n => n > 0 ? `${n} to your gift` : "🎁 A coffee M is on us!", code: "Show this code at the till", stamps: n => `${n}/10`,
+    order: "Order ahead", orderSub: "Skip the queue", menu: "Menu", menuSub: "All drinks and prices", bot: "Bot", botSub: "Profile and visits",
+    joinT: "Join Friends Club", joinP: "A stamp for every drink, the 10th coffee is on us. Two stamps right away.", join: "📱 Share my number",
+    joined: "Done! Updating your card…", where: "Where will you pick it up?", open: "Open for pre-orders", closedNow: h => `Pre-orders Mon–Sat ${h}`,
+    closedNote: "Pre-orders are closed right now — you can still browse the menu.", from: "from", add: "Add", added: "Added", max: m => `Up to ${m} drinks per order`,
+    cartBtn: (n, s) => `Cart · ${n} · ${s} sum`, yourOrder: "Your order", pickup: "When will you pick it up?", noSlots: "No free times left today.",
+    pay: "Payment", payClick: "Click", payClickSub: "Now, in Telegram", payTill: "At the till", payTillSub: "When you pick up", total: "Total",
+    rule: "If you don't pick it up, pre-ordering closes for 7 days.", placeBtn: s => `Place order · ${s} sum`, payBtn: s => `Pay · ${s} sum`, empty: "Your cart is empty",
+    toMenu: "To the menu", sent: "Order sent!", paid: "Paid!", pickAt: t => `Pick it up at ${t}`, showCode: c => `Show code ${c} at the till`, home: "Home",
+    st: ["Sent", "Accepted", "Ready"], waitPay: "Waiting for payment", cancel: "Cancel order", cancelled: "Order cancelled", activeT: "Your order",
+    ready: "☕ Ready — pick it up at the till", accepted: "Being made for", sentSt: "Waiting for the café to accept", payCancelled: "Payment didn't go through — you can order again",
+    sum: "sum", size: "Size", qty: "Quantity", change: "Change",
+    err: { not_joined: "Please share your number first", blocked: "Pre-ordering is closed for now: the last order wasn't collected", active: "You already have an active order", closed: "The café isn't taking pre-orders right now", slot_gone: "That time is taken — please choose another", too_many: "Too many drinks", payment_unavailable: "Click payment isn't available right now", server: "Something went wrong. Please try again", unauthorized: "Please open the app from @friendscofe_bot", net: "No connection. Check your internet" } },
+};
+const CATN = { hot: { ru: "Горячий кофе", uz: "Issiq qahva", en: "Hot coffee" }, iced: { ru: "Холодный кофе", uz: "Sovuq qahva", en: "Iced coffee" }, noncoffee: { ru: "Не кофе", uz: "Qahvasiz", en: "No coffee" }, tea: { ru: "Чай", uz: "Choy", en: "Tea" }, lemon: { ru: "Лимонады", uz: "Limonadlar", en: "Lemonades" }, shake: { ru: "Фраппе и смузи", uz: "Frappe va smuzi", en: "Frappe & smoothies" } };
+
+/* ---------- state ---------- */
+let D = null, L = "ru", cafe = null, cart = [], slot = null, pay = "till", stack = ["home"], poll = null, slotsCache = [];
+const t = () => W[L];
+const nm = (it) => L === "uz" ? it.name_uz : L === "en" ? (it.name_en || it.name_ru) : it.name_ru;
+const ds = (it) => (L === "uz" ? it.desc_uz : L === "en" ? it.desc_en : it.desc_ru) || "";
+const items = () => D.menu.filter((m) => m.cafe === cafe);
+const find = (id) => items().find((m) => m.id === id);
+const count = () => cart.reduce((n, x) => n + x.qty, 0);
+const priceOf = (x) => { const it = find(x.id); if (!it) return 0; const k = it.sizes.length ? it.sizes.indexOf(x.size) : 0; return it.prices[k] ?? it.prices[0]; };
+const sum = () => cart.reduce((s, x) => s + priceOf(x) * x.qty, 0);
+const haptic = (k) => { try { k === "ok" ? tg.HapticFeedback.notificationOccurred("success") : k === "err" ? tg.HapticFeedback.notificationOccurred("error") : tg.HapticFeedback.impactOccurred(k || "light"); } catch {} };
+function toast(msg) { const el = $("#toast"); el.textContent = msg; el.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("on"), 2600); }
+
+async function api(action, extra = {}) {
+  try {
+    const r = await fetch(API, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action, initData: tg?.initData || "", ...extra }) });
+    return await r.json();
+  } catch { return { error: "net" }; }
+}
+
+/* ---------- illustrations (flat, brand colours) — replaced by photo_url when a photo exists ---------- */
+const TINT = { esp: "#3c2418", amer: "#4a2c1d", cap: "#b98a62", latte: "#c9a07a", flat: "#a87650", raf: "#e3c9a6", spanish: "#c79a6b", iamer: "#5a3a2a", icap: "#b98a62", ilatte: "#cfa77e", bumble: "#e08a2c", tonic: "#7a4b2f",
+  icetea: "#b5652a", mango: "#e8962f", mojito: "#9cc45a", pine: "#e6c34a", cocoa: "#5c3624", matcha: "#8aa357", imatcha: "#9bb466", plain: "#a8592a", lemon: "#d7a43a", berry: "#9c3d55", buck: "#e0892b", ginger: "#d98a3a", frappe: "#a9805e", shake: "#f0c6c6", smoothie: "#b84a6b" };
+function art(it, anim = true) {
+  const c = TINT[it.id] || "#8c4a24", cat = it.cat;
+  const steam = anim ? `<g class="steam" stroke="#8c4a24" stroke-width="2.6" fill="none" stroke-linecap="round" opacity=".8"><path d="M38 14c-4 4 4 6 0 10"/><path d="M50 10c-4 4 4 6 0 10"/><path d="M62 14c-4 4 4 6 0 10"/></g>` : "";
+  if (cat === "hot" || (cat === "noncoffee" && (it.id === "cocoa" || it.id === "matcha")))
+    return `<svg viewBox="0 0 100 100">${steam}<ellipse cx="50" cy="86" rx="34" ry="6" fill="#3c2418" opacity=".12"/><path d="M20 34h56v20a26 26 0 0 1-26 26h-4a26 26 0 0 1-26-26z" fill="#fbf5ec" stroke="#3c2418" stroke-width="3"/><path d="M76 40h6a10 10 0 0 1 0 20h-7" stroke="#3c2418" stroke-width="4" fill="none"/><ellipse cx="48" cy="36" rx="26" ry="5" fill="${c}"/><path d="M40 35c4-3 12-3 16 0" stroke="#fbf5ec" stroke-width="2" fill="none" opacity=".8"/></svg>`;
+  if (cat === "tea")
+    return `<svg viewBox="0 0 100 100">${steam}<ellipse cx="50" cy="88" rx="30" ry="5" fill="#3c2418" opacity=".12"/><path d="M28 30h44l-5 52a6 6 0 0 1-6 5H39a6 6 0 0 1-6-5z" fill="#fbf5ec" stroke="#3c2418" stroke-width="3"/><path d="M31 44h38l-3 36a5 5 0 0 1-5 4H39a5 5 0 0 1-5-4z" fill="${c}" opacity=".85"/>${it.id === "lemon" ? `<circle cx="64" cy="34" r="9" fill="#f3d36b" stroke="#3c2418" stroke-width="2.4"/>` : ""}</svg>`;
+  if (cat === "shake")
+    return `<svg viewBox="0 0 100 100" class="${anim ? "bob" : ""}"><ellipse cx="50" cy="90" rx="26" ry="5" fill="#3c2418" opacity=".12"/><path d="M58 6l-6 26" stroke="#8c4a24" stroke-width="4" stroke-linecap="round"/><path d="M30 26c0-8 40-8 40 0z" fill="#fbf5ec" stroke="#3c2418" stroke-width="3"/><path d="M30 30h40l-5 54a5 5 0 0 1-5 4H40a5 5 0 0 1-5-4z" fill="${c}" stroke="#3c2418" stroke-width="3"/><path d="M33 46h34" stroke="#fbf5ec" stroke-width="3" opacity=".6"/></svg>`;
+  // iced coffee, lemonades, iced matcha
+  return `<svg viewBox="0 0 100 100" class="${anim ? "bob" : ""}"><ellipse cx="50" cy="90" rx="26" ry="5" fill="#3c2418" opacity=".12"/><path d="M60 4l-7 30" stroke="#3c2418" stroke-width="4" stroke-linecap="round"/><path d="M28 22h44l-5 62a5 5 0 0 1-5 4H38a5 5 0 0 1-5-4z" fill="#fbf5ec" stroke="#3c2418" stroke-width="3"/><path d="M31 38h38l-4 46a4 4 0 0 1-4 3H39a4 4 0 0 1-4-3z" fill="${c}" opacity=".9"/><rect x="38" y="42" width="11" height="11" rx="2" fill="#fbf5ec" opacity=".75" transform="rotate(-12 43 47)"/><rect x="52" y="50" width="10" height="10" rx="2" fill="#fbf5ec" opacity=".6" transform="rotate(14 57 55)"/>${cat === "lemon" ? `<circle cx="68" cy="24" r="8" fill="#f3d36b" stroke="#3c2418" stroke-width="2.4"/>` : ""}</svg>`;
+}
+const pic = (it, anim) => it.photo_url ? `<img src="${it.photo_url}" alt="" loading="lazy">` : art(it, anim);
+const CUP = `<svg viewBox="0 0 40 40"><path d="M8 14h22v8a11 11 0 0 1-11 11h0A11 11 0 0 1 8 22z" fill="#3c2418"/><path d="M30 16h3a4 4 0 0 1 0 8h-3" stroke="#3c2418" stroke-width="3" fill="none"/></svg>`;
+
+/* ---------- navigation ---------- */
+function go(id, push = true) {
+  document.querySelectorAll(".screen").forEach((s) => s.classList.toggle("on", s.id === id));
+  if (push && stack[stack.length - 1] !== id) stack.push(id);
+  window.scrollTo(0, 0);
+  try { stack.length > 1 && id !== "done" ? tg.BackButton.show() : tg.BackButton.hide(); } catch {}
+  if (id === "home") renderHome();
+  updateMain();
+}
+function back() {
+  if ($("#sheet").classList.contains("on")) return closeSheet();
+  stack.pop();
+  go(stack[stack.length - 1] || "home", false);
+}
+
+/* ---------- Telegram main button ---------- */
+let mainHandler = null;
+function setMain(text, fn) {
+  try {
+    if (mainHandler) tg.MainButton.offClick(mainHandler);
+    mainHandler = fn;
+    if (!text) return tg.MainButton.hide();
+    tg.MainButton.setParams({ text, color: "#3c2418", text_color: "#f3e6d3", is_active: true, is_visible: true });
+    tg.MainButton.onClick(mainHandler);
+  } catch {}
+}
+function updateMain() {
+  const cur = stack[stack.length - 1];
+  if ($("#sheet").classList.contains("on")) return;
+  if (cur === "menu" && count()) return setMain(t().cartBtn(count(), fmt(sum())), () => { go("cart"); renderCart(); });
+  if (cur === "cart" && count()) {
+    const ready = slot && cafeOpen();
+    if (!ready) return setMain(null);
+    return setMain(pay === "click" ? t().payBtn(fmt(sum())) : t().placeBtn(fmt(sum())), place);
+  }
+  setMain(null);
+}
+const cafeOpen = () => D.cafes.find((c) => c.id === cafe)?.open;
+
+/* ---------- home ---------- */
+function renderHome() {
+  $("#langs").innerHTML = ["uz", "ru", "en"].map((l) => `<button class="${l === L ? "on" : ""}" data-l="${l}">${l.toUpperCase()}</button>`).join("");
+  const c = D.card;
+  if (c) {
+    const s = Math.min(c.stamps, 10);
+    $("#cardBox").innerHTML = `<div class="card"><div class="hi">${t().hi(c.name || "")}</div><div class="sub">${t().card} · ${t().left(10 - s)}</div>
+      <div class="cups">${Array.from({ length: 10 }, (_, i) => i === 9 && s < 10 ? `<div class="cup gift"><span>🎁</span></div>` : `<div class="cup ${i < s ? "full" : ""}" style="--d:${i}">${CUP}</div>`).join("")}</div>
+      <div class="code"><div><small>${t().code}</small><b>${c.code || "—"}</b></div><span class="stamp">☕ ${t().stamps(s)}</span></div></div>`;
+    document.querySelectorAll(".cup.full svg").forEach((el, i) => (el.style.animationDelay = `${0.08 * i + 0.15}s`));
+  } else {
+    $("#cardBox").innerHTML = `<div class="join"><h2>${t().joinT}</h2><p>${t().joinP}</p><button class="btn" id="joinBtn">${t().join}</button></div>`;
+  }
+  renderActive();
+  $("#tiles").innerHTML = `
+    <button class="tile big" id="tOrder"><div><b>${t().order}</b><small>${t().orderSub}</small></div><span class="ic">☕</span></button>
+    <button class="tile" id="tMenu"><span class="ic">📋</span><div><b>${t().menu}</b><small>${t().menuSub}</small></div></button>
+    <button class="tile" id="tBot"><span class="ic">👤</span><div><b>${t().bot}</b><small>${t().botSub}</small></div></button>`;
+}
+function renderActive() {
+  const a = D.active;
+  if (!a) { $("#activeBox").innerHTML = ""; return; }
+  const idx = a.status === "ready" ? 2 : a.status === "accepted" ? 1 : 0;
+  const pick = new Date(new Date(a.pickup_at).getTime() + 5 * 3600e3).toISOString().slice(11, 16);
+  const cname = D.cafes.find((c) => c.id === a.cafe)?.name[L] || "";
+  const line = a.status === "awaiting_payment" ? t().waitPay : a.status === "ready" ? t().ready : a.status === "accepted" ? `${t().accepted} ${pick}` : t().sentSt;
+  $("#activeBox").innerHTML = `<div class="active"><div class="row"><span class="note">${t().activeT} · ${cname}</span><b>${a.code}</b></div>
+    <div class="steps">${[0, 1, 2].map((i) => `<i class="${i < idx ? "on" : i === idx ? "on now" : ""}"></i>`).join("")}</div>
+    <div class="steplbl">${t().st.map((s) => `<span>${s}</span>`).join("")}</div>
+    <div style="margin-top:10px;font-weight:600">${a.status === "accepted" ? line : line + " · " + pick}</div>
+    ${!a.paid && ["new", "awaiting_payment"].includes(a.status) ? `<button class="link" id="cancelBtn" data-id="${a.id}">${t().cancel}</button>` : ""}</div>`;
+}
+
+/* ---------- cafés ---------- */
+function renderCafes() {
+  $("#cafesTitle").textContent = t().where;
+  const order = D.card?.home === "EMU" ? ["EMU", "UWED"] : ["UWED", "EMU"];
+  $("#cafeList").innerHTML = order.map((id) => {
+    const c = D.cafes.find((x) => x.id === id);
+    const h = `${String(c.hours[0]).padStart(2, "0")}:00–${c.hours[1] - 1}:25`;
+    return `<button class="cafe" data-cafe="${id}"><div class="pin">${c.name[L][0]}</div><div><b>${c.name[L]}</b><small class="note"><span class="dot" style="background:${c.open ? "var(--ok)" : "var(--err)"}"></span>${c.open ? t().open : t().closedNow(h)}</small></div></button>`;
+  }).join("");
+}
+
+/* ---------- menu ---------- */
+let curCat = null;
+function renderMenu() {
+  const c = D.cafes.find((x) => x.id === cafe);
+  $("#menuTitle").textContent = t().menu;
+  $("#cafeSwitch").textContent = `📍 ${c.name[L]}`;
+  const cats = D.cats.filter((k) => items().some((m) => m.cat === k));
+  $("#chips").innerHTML = cats.map((k) => `<button class="chip ${k === curCat ? "on" : ""}" data-cat="${k}">${CATN[k][L]}</button>`).join("");
+  $("#closedNote").innerHTML = c.open ? "" : `<div class="closed">⏰ ${t().closedNote}</div>`;
+  $("#menuBody").innerHTML = cats.map((k) => `<div class="sect" id="s-${k}">${CATN[k][L]}</div><div class="grid">${items().filter((m) => m.cat === k).map((m, i) => {
+    const q = cart.filter((x) => x.id === m.id).reduce((n, x) => n + x.qty, 0);
+    return `<button class="item" data-id="${m.id}" style="animation-delay:${i * 40}ms"><div class="ph">${pic(m, true)}${q ? `<span class="q">${q}</span>` : ""}</div><div class="tx"><b>${nm(m).replace("★ ", "")}</b><small>${ds(m)}</small><span class="pr">${m.sizes.length > 1 ? t().from + " " : ""}${fmt(m.prices[0])} ${t().sum}</span></div></button>`;
+  }).join("")}</div>`).join("");
+  updateMain();
+}
+// highlight the category chip while scrolling
+window.addEventListener("scroll", () => {
+  if (stack[stack.length - 1] !== "menu") return;
+  let cur = null;
+  document.querySelectorAll(".sect").forEach((s) => { if (s.getBoundingClientRect().top < 140) cur = s.id.slice(2); });
+  if (cur && cur !== curCat) { curCat = cur; document.querySelectorAll(".chip").forEach((ch) => ch.classList.toggle("on", ch.dataset.cat === cur)); document.querySelector(`.chip[data-cat="${cur}"]`)?.scrollIntoView({ inline: "center", block: "nearest", behavior: "smooth" }); }
+}, { passive: true });
+
+/* ---------- item sheet ---------- */
+let sheetItem = null, sheetSize = null, sheetQty = 1;
+function openSheet(id) {
+  const it = find(id); if (!it) return;
+  sheetItem = it; sheetSize = it.sizes[Math.min(1, it.sizes.length - 1)] ?? null; sheetQty = 1;
+  drawSheet();
+  $("#veil").classList.add("on"); $("#sheet").classList.add("on");
+  haptic("light");
+  try { tg.BackButton.show(); } catch {}
+  const k = () => (sheetItem.sizes.length ? sheetItem.sizes.indexOf(sheetSize) : 0);
+  setMain(`${t().add} · ${fmt((sheetItem.prices[k()] ?? sheetItem.prices[0]) * sheetQty)} ${t().sum}`, addToCart);
+}
+function drawSheet() {
+  const it = sheetItem, k = it.sizes.length ? it.sizes.indexOf(sheetSize) : 0;
+  $("#sheet").innerHTML = `<div class="grab"></div><div class="ph">${pic(it, true)}</div><div class="in"><h3>${nm(it).replace("★ ", "")}</h3><p>${ds(it)}</p>
+    ${it.sizes.length ? `<div class="label" style="margin-top:0">${t().size}</div><div class="seg">${it.sizes.map((s, i) => `<button class="${s === sheetSize ? "on" : ""}" data-size="${s}">${s}<small>${fmt(it.prices[i])} ${t().sum}</small></button>`).join("")}</div>` : ""}
+    <div class="qty"><b class="nun" style="font-size:17px">${t().qty}</b><div class="step"><button data-q="-1">−</button><span>${sheetQty}</span><button data-q="1">+</button></div></div>
+    ${tg?.MainButton && tg.platform !== "unknown" ? "" : `<button class="btn" id="sheetAdd">${t().add} · ${fmt((it.prices[k] ?? it.prices[0]) * sheetQty)} ${t().sum}</button>`}</div>`;
+}
+function closeSheet() {
+  $("#veil").classList.remove("on"); $("#sheet").classList.remove("on");
+  if (stack.length <= 1) try { tg.BackButton.hide(); } catch {}
+  updateMain();
+}
+function addToCart() {
+  if (count() + sheetQty > D.maxDrinks) { haptic("err"); return toast(t().max(D.maxDrinks)); }
+  const same = cart.find((x) => x.id === sheetItem.id && x.size === sheetSize);
+  if (same) same.qty += sheetQty; else cart.push({ id: sheetItem.id, size: sheetSize, qty: sheetQty });
+  haptic("medium"); toast(`${t().added}: ${nm(sheetItem).replace("★ ", "")}`);
+  closeSheet(); renderMenu();
+}
+
+/* ---------- cart & checkout ---------- */
+async function renderCart() {
+  const c = D.cafes.find((x) => x.id === cafe);
+  $("#cartTitle").textContent = t().yourOrder;
+  $("#cartCafe").textContent = `📍 ${c.name[L]}`;
+  if (!cart.length) {
+    $("#cartLines").innerHTML = `<div class="empty"><div style="font-size:44px">🧺</div><p>${t().empty}</p><button class="btn ghost" id="toMenu">${t().toMenu}</button></div>`;
+    $("#checkout").innerHTML = ""; return updateMain();
+  }
+  $("#cartLines").innerHTML = cart.map((x, i) => { const it = find(x.id); return `<div class="line"><div class="ph">${pic(it, false)}</div><div class="nm"><b>${nm(it).replace("★ ", "")}${x.size ? " " + x.size : ""}</b><small>${fmt(priceOf(x) * x.qty)} ${t().sum}</small></div><div class="step"><button data-cq="-1" data-i="${i}">−</button><span>${x.qty}</span><button data-cq="1" data-i="${i}">+</button></div></div>`; }).join("");
+  if (!c.open) { $("#checkout").innerHTML = `<div class="closed" style="margin-top:16px">⏰ ${t().closedNote}</div>`; return updateMain(); }
+  $("#checkout").innerHTML = `<div class="label">${t().pickup}</div><div id="slotBox"><div class="note">…</div></div>
+    ${D.click ? `<div class="label">${t().pay}</div><div class="pay"><button data-pay="click" class="${pay === "click" ? "on" : ""}">💳 ${t().payClick}<small>${t().payClickSub}</small></button><button data-pay="till" class="${pay === "till" ? "on" : ""}">🏪 ${t().payTill}<small>${t().payTillSub}</small></button></div>` : ""}
+    <div class="total"><span>${t().total}</span><span>${fmt(sum())} ${t().sum}</span></div><div class="note">${t().rule}</div>`;
+  const r = await api("slots", { cafe });
+  slotsCache = r.slots || [];
+  drawSlots();
+}
+function drawSlots() {
+  const need = count();
+  if (!slotsCache.length) { $("#slotBox").innerHTML = `<div class="note">${t().noSlots}</div>`; slot = null; return updateMain(); }
+  if (slot && !slotsCache.find((s) => s.label.replace(":", "") === slot && s.left >= need)) slot = null;
+  if (!slot) { const f = slotsCache.find((s) => s.left >= need); slot = f ? f.label.replace(":", "") : null; }
+  $("#slotBox").innerHTML = `<div class="slots">${slotsCache.map((s) => `<button class="slot ${s.label.replace(":", "") === slot ? "on" : ""}" data-slot="${s.label.replace(":", "")}" ${s.left < need ? "disabled" : ""}>${s.label}</button>`).join("")}</div>`;
+  updateMain();
+}
+async function place() {
+  try { tg.MainButton.showProgress(); } catch {}
+  const r = await api("order", { cafe, slot, pay: D.click ? pay : "till", items: cart.map((x) => ({ id: x.id, size: x.size, qty: x.qty })) });
+  try { tg.MainButton.hideProgress(); } catch {}
+  if (r.error) { haptic("err"); toast(t().err[r.error] || t().err.server); if (r.error === "slot_gone") renderCart(); return; }
+  if (r.invoice) {
+    tg.openInvoice(r.invoice, (status) => {
+      if (status === "paid") { cart = []; showDone(r, true); }
+      else if (status === "failed") { haptic("err"); toast(t().payCancelled); api("cancel", { id: r.id }); }
+      else { api("cancel", { id: r.id }); toast(t().payCancelled); }
+    });
+    return;
+  }
+  cart = []; showDone(r, false);
+}
+function showDone(r, paid) {
+  haptic("ok");
+  const code = D.card?.code || "";
+  $("#doneBox").innerHTML = `<svg class="check" viewBox="0 0 120 120"><circle cx="60" cy="60" r="50" fill="none" stroke="#3c2418" stroke-width="7"/><path d="M38 62l15 15 30-32" fill="none" stroke="#3c2418" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <h2>${paid ? t().paid : t().sent}</h2><div class="big">${r.code}</div><div style="font-weight:700">${t().pickAt(r.pickup)}</div>
+    ${code ? `<p class="note" style="margin:14px 0 22px">${t().showCode(code)}</p>` : ""}<button class="btn" id="doneHome">${t().home}</button>`;
+  stack = ["home", "done"]; go("done", false);
+  refresh();
+}
+
+/* ---------- data ---------- */
+async function refresh() {
+  const r = await api("init");
+  if (r.error) return r;
+  D = r; if (!cafe) cafe = D.card?.home || "UWED";
+  return r;
+}
+function startPoll() {
+  clearInterval(poll);
+  poll = setInterval(async () => {
+    if (!D?.joined) { const r = await refresh(); if (!r?.error && D.joined && stack[stack.length - 1] === "home") renderHome(); return; }
+    if (!D.active) return;
+    const r = await api("status");
+    if (r.active?.status !== D.active?.status) { if (r.active?.status === "ready") haptic("ok"); D.active = r.active; if (stack[stack.length - 1] === "home") renderActive(); }
+  }, 12000);
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click", async (e) => {
+  const el = e.target.closest("button"); if (!el) return;
+  if (el.dataset.l) { L = el.dataset.l; haptic(); api("lang", { lang: L }); document.documentElement.lang = L; renderHome(); return; }
+  if (el.id === "joinBtn") {
+    try { tg.requestContact((ok) => { if (ok) { haptic("ok"); toast(t().joined); setTimeout(async () => { await refresh(); renderHome(); }, 2500); } }); }
+    catch { tg.openTelegramLink(BOT); }
+    return;
+  }
+  if (el.id === "tOrder") { if (!D.joined) { haptic("err"); return toast(t().err.not_joined); } if (D.active) { haptic("err"); return toast(t().err.active); } renderCafes(); return go("cafes"); }
+  if (el.id === "tMenu") { curCat = null; renderMenu(); return go("menu"); }
+  if (el.id === "tBot") { try { tg.openTelegramLink(BOT); tg.close(); } catch { location.href = BOT; } return; }
+  if (el.dataset.cafe) { if (cafe !== el.dataset.cafe) cart = []; cafe = el.dataset.cafe; curCat = null; haptic(); renderMenu(); return go("menu"); }
+  if (el.id === "cafeSwitch") { renderCafes(); return go("cafes"); }
+  if (el.dataset.cat) { document.getElementById("s-" + el.dataset.cat)?.scrollIntoView({ behavior: "smooth", block: "start" }); window.scrollBy(0, -120); return; }
+  if (el.classList.contains("item")) return openSheet(el.dataset.id);
+  if (el.dataset.size) { sheetSize = el.dataset.size; haptic("light"); drawSheet(); return openSheetMain(); }
+  if (el.dataset.q) { sheetQty = Math.max(1, Math.min(D.maxDrinks, sheetQty + Number(el.dataset.q))); haptic("light"); drawSheet(); return openSheetMain(); }
+  if (el.id === "sheetAdd") return addToCart();
+  if (el.dataset.cq) { const x = cart[Number(el.dataset.i)]; const nq = x.qty + Number(el.dataset.cq); if (nq > 0 && count() + Number(el.dataset.cq) > D.maxDrinks) { haptic("err"); return toast(t().max(D.maxDrinks)); } x.qty = nq; if (x.qty <= 0) cart.splice(Number(el.dataset.i), 1); haptic("light"); return renderCart(); }
+  if (el.dataset.slot) { slot = el.dataset.slot; haptic("light"); return drawSlots(); }
+  if (el.dataset.pay) { pay = el.dataset.pay; haptic("light"); document.querySelectorAll(".pay button").forEach((b) => b.classList.toggle("on", b.dataset.pay === pay)); return updateMain(); }
+  if (el.id === "toMenu") return back();
+  if (el.id === "cancelBtn") { const r = await api("cancel", { id: Number(el.dataset.id) }); if (r.ok) { toast(t().cancelled); D.active = null; renderActive(); } else toast(t().err.server); return; }
+  if (el.id === "doneHome") { stack = ["home"]; return go("home", false); }
+});
+function openSheetMain() { const k = sheetItem.sizes.length ? sheetItem.sizes.indexOf(sheetSize) : 0; setMain(`${t().add} · ${fmt((sheetItem.prices[k] ?? sheetItem.prices[0]) * sheetQty)} ${t().sum}`, addToCart); }
+$("#veil").addEventListener("click", closeSheet);
+
+/* ---------- start ---------- */
+(async function start() {
+  try {
+    tg.ready(); tg.expand();
+    tg.setHeaderColor("#f3e6d3"); tg.setBackgroundColor("#f3e6d3");
+    try { tg.setBottomBarColor?.("#f3e6d3"); } catch {}
+    tg.BackButton.onClick(back);
+    tg.enableClosingConfirmation?.(); tg.disableClosingConfirmation?.();
+  } catch {}
+  const r = await refresh();
+  $("#loading").remove();
+  if (!r || r.error) {
+    document.querySelector(".wrap").insertAdjacentHTML("beforeend", `<div class="empty"><div style="font-size:44px">☕</div><p>${(W[L].err[r?.error] || W[L].err.server)}</p><a class="btn fallbtn" href="${BOT}">@friendscofe_bot</a></div>`);
+    return;
+  }
+  L = D.lang; document.documentElement.lang = L;
+  const sp = tg?.initDataUnsafe?.start_param || "";
+  if (sp === "menu") { renderMenu(); stack = ["home", "menu"]; go("menu", false); try { tg.BackButton.show(); } catch {} }
+  else if (sp === "order" && D.joined && !D.active) { renderCafes(); stack = ["home", "cafes"]; go("cafes", false); try { tg.BackButton.show(); } catch {} }
+  else go("home", false);
+  startPoll();
+})();
+</script>
+</body>
+</html>
