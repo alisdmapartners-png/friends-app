@@ -46,6 +46,9 @@ button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
 .code .stamp{font:800 13px Nunito;background:var(--cream);color:var(--brown);border-radius:999px;padding:6px 10px}
 .join{background:var(--paper);border-radius:26px;padding:20px;text-align:center;border:1px solid var(--line)}
 .join p{color:var(--muted);margin:8px 0 16px}
+.inp{width:100%;box-sizing:border-box;border:1.5px solid var(--line);background:#fff;border-radius:16px;padding:14px 16px;font:600 17px/1.2 Onest,system-ui,sans-serif;color:var(--ink,#3c2418);margin:0 0 12px;outline:none;text-align:center}
+.inp:focus{border-color:#8c4a24}
+.join.name{margin-bottom:14px;animation:pop .35s ease}
 
 .btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px;border-radius:18px;background:var(--brown);color:var(--cream);font:800 17px Nunito;transition:transform .15s}
 .btn:active{transform:scale(.97)}
@@ -221,7 +224,7 @@ const W = {
   ru: { hi: n => `Привет${n ? ", " + n : ""}!`, card: "Ваша кофейная карта", left: n => n > 0 ? `До подарка ${n}` : "🎁 Кофе M в подарок!", code: "Покажите код на кассе", stamps: n => `${n}/10`,
     order: "Заказать заранее", orderSub: "Заберите без очереди", menu: "Меню", menuSub: "Все напитки и цены", bot: "Бот", botSub: "Профиль и визиты",
     joinT: "Вступите в Friends Club", joinP: "Штамп за каждый напиток, 10-й кофе — в подарок. Два штампа сразу.", join: "📱 Поделиться номером",
-    joined: "Готово! Обновляем карту…", where: "Где заберёте?", open: "Открыто для предзаказа", closedNow: h => `Предзаказ Пн–Сб ${h}`,
+    joined: "Готово! Обновляем карту…", nameT: "Как вас зовут?", nameP: "Имя и фамилия — так вас узнают на кассе.", namePh: "Например: Али Валиев", nameBtn: "Сохранить", nameOk: n => `Спасибо, ${n}!`, where: "Где заберёте?", open: "Открыто для предзаказа", closedNow: h => `Предзаказ Пн–Сб ${h}`,
     closedNote: "Сейчас предзаказ закрыт — меню можно посмотреть.", from: "от", add: "Добавить", added: "Добавлено", max: m => `В одном заказе до ${m} напитков`,
     cartBtn: (n, s) => `Корзина · ${n} · ${s} сум`, yourOrder: "Ваш заказ", pickup: "Когда заберёте?", noSlots: "На сегодня свободного времени больше нет.",
     pay: "Оплата", payClick: "Click", payClickSub: "Сейчас, в Telegram", payTill: "На кассе", payTillSub: "Когда заберёте", total: "Итого",
@@ -230,11 +233,11 @@ const W = {
     st: ["Отправлен", "Принят", "Готов"], waitPay: "Ждём оплату", cancel: "Отменить заказ", cancelled: "Заказ отменён", activeT: "Ваш заказ",
     ready: "☕ Готов — заберите на кассе", accepted: "Готовим к", sentSt: "Ждём подтверждения кафе", payCancelled: "Оплата не прошла — заказ можно оформить снова",
     sum: "сум", size: "Размер", qty: "Количество", change: "Сменить",
-    err: { not_joined: "Сначала поделитесь номером", blocked: "Предзаказ временно закрыт: прошлый заказ не забрали", active: "У вас уже есть активный заказ", closed: "Кафе сейчас не принимает предзаказы", slot_gone: "Это время уже занято — выберите другое", too_many: "Слишком много напитков", payment_unavailable: "Оплата Click сейчас недоступна", server: "Что-то пошло не так. Попробуйте ещё раз", unauthorized: "Откройте приложение из бота @friendscofe_bot", net: "Нет связи. Проверьте интернет" } },
+    err: { not_joined: "Сначала поделитесь номером", no_name: "Сначала напишите имя и фамилию", bad_name: "Напишите имя и фамилию буквами, например: Али Валиев", blocked: "Предзаказ временно закрыт: прошлый заказ не забрали", active: "У вас уже есть активный заказ", closed: "Кафе сейчас не принимает предзаказы", slot_gone: "Это время уже занято — выберите другое", too_many: "Слишком много напитков", payment_unavailable: "Оплата Click сейчас недоступна", server: "Что-то пошло не так. Попробуйте ещё раз", unauthorized: "Откройте приложение из бота @friendscofe_bot", net: "Нет связи. Проверьте интернет" } },
   uz: { hi: n => `Assalomu alaykum${n ? ", " + n : ""}!`, card: "Kofe kartangiz", left: n => n > 0 ? `Sovgʻagacha ${n} ta` : "🎁 Qahva M — sovgʻa!", code: "Kassada kodni koʻrsating", stamps: n => `${n}/10`,
     order: "Oldindan buyurtma", orderSub: "Navbatsiz olib keting", menu: "Menyu", menuSub: "Barcha ichimliklar va narxlar", bot: "Bot", botSub: "Profil va tashriflar",
     joinT: "Friends Clubga qoʻshiling", joinP: "Har bir ichimlik uchun shtamp, 10-chi qahva — sovgʻa. Ikkita shtamp darhol.", join: "📱 Raqamni ulashish",
-    joined: "Tayyor! Karta yangilanmoqda…", where: "Qayerdan olib ketasiz?", open: "Oldindan buyurtma ochiq", closedNow: h => `Oldindan buyurtma Du–Sh ${h}`,
+    joined: "Tayyor! Karta yangilanmoqda…", nameT: "Ismingizni yozing", nameP: "Ism va familiya — kassada sizni shunday taniymiz.", namePh: "Masalan: Ali Valiyev", nameBtn: "Saqlash", nameOk: n => `Rahmat, ${n}!`, where: "Qayerdan olib ketasiz?", open: "Oldindan buyurtma ochiq", closedNow: h => `Oldindan buyurtma Du–Sh ${h}`,
     closedNote: "Hozir oldindan buyurtma yopiq — menyuni koʻrish mumkin.", from: "", add: "Qoʻshish", added: "Qoʻshildi", max: m => `Bir buyurtmada ${m} tagacha ichimlik`,
     cartBtn: (n, s) => `Savat · ${n} · ${s} soʻm`, yourOrder: "Buyurtmangiz", pickup: "Qachon olib ketasiz?", noSlots: "Bugun boʻsh vaqt qolmadi.",
     pay: "Toʻlov", payClick: "Click", payClickSub: "Hozir, Telegramda", payTill: "Kassada", payTillSub: "Olib ketayotganda", total: "Jami",
@@ -243,11 +246,11 @@ const W = {
     st: ["Yuborildi", "Qabul qilindi", "Tayyor"], waitPay: "Toʻlov kutilmoqda", cancel: "Buyurtmani bekor qilish", cancelled: "Buyurtma bekor qilindi", activeT: "Buyurtmangiz",
     ready: "☕ Tayyor — kassadan oling", accepted: "Tayyorlanmoqda:", sentSt: "Kafe tasdiqlashini kutyapmiz", payCancelled: "Toʻlov oʻtmadi — qaytadan buyurtma berishingiz mumkin",
     sum: "soʻm", size: "Hajmi", qty: "Soni", change: "Oʻzgartirish",
-    err: { not_joined: "Avval raqamingizni ulashing", blocked: "Oldindan buyurtma vaqtincha yopiq: oxirgi buyurtma olib ketilmagan", active: "Sizda faol buyurtma bor", closed: "Kafe hozir oldindan buyurtma qabul qilmaydi", slot_gone: "Bu vaqt band — boshqasini tanlang", too_many: "Ichimliklar juda koʻp", payment_unavailable: "Click toʻlovi hozir ishlamayapti", server: "Xatolik yuz berdi. Qaytadan urinib koʻring", unauthorized: "Ilovani @friendscofe_bot orqali oching", net: "Aloqa yoʻq. Internetni tekshiring" } },
+    err: { not_joined: "Avval raqamingizni ulashing", no_name: "Avval ism va familiyangizni yozing", bad_name: "Ism va familiyani harflar bilan yozing, masalan: Ali Valiyev", blocked: "Oldindan buyurtma vaqtincha yopiq: oxirgi buyurtma olib ketilmagan", active: "Sizda faol buyurtma bor", closed: "Kafe hozir oldindan buyurtma qabul qilmaydi", slot_gone: "Bu vaqt band — boshqasini tanlang", too_many: "Ichimliklar juda koʻp", payment_unavailable: "Click toʻlovi hozir ishlamayapti", server: "Xatolik yuz berdi. Qaytadan urinib koʻring", unauthorized: "Ilovani @friendscofe_bot orqali oching", net: "Aloqa yoʻq. Internetni tekshiring" } },
   en: { hi: n => `Hello${n ? ", " + n : ""}!`, card: "Your coffee card", left: n => n > 0 ? `${n} to your gift` : "🎁 A coffee M is on us!", code: "Show this code at the till", stamps: n => `${n}/10`,
     order: "Order ahead", orderSub: "Skip the queue", menu: "Menu", menuSub: "All drinks and prices", bot: "Bot", botSub: "Profile and visits",
     joinT: "Join Friends Club", joinP: "A stamp for every drink, the 10th coffee is on us. Two stamps right away.", join: "📱 Share my number",
-    joined: "Done! Updating your card…", where: "Where will you pick it up?", open: "Open for pre-orders", closedNow: h => `Pre-orders Mon–Sat ${h}`,
+    joined: "Done! Updating your card…", nameT: "What is your name?", nameP: "First and last name — that's how the till will know you.", namePh: "For example: Ali Valiyev", nameBtn: "Save", nameOk: n => `Thank you, ${n}!`, where: "Where will you pick it up?", open: "Open for pre-orders", closedNow: h => `Pre-orders Mon–Sat ${h}`,
     closedNote: "Pre-orders are closed right now — you can still browse the menu.", from: "from", add: "Add", added: "Added", max: m => `Up to ${m} drinks per order`,
     cartBtn: (n, s) => `Cart · ${n} · ${s} sum`, yourOrder: "Your order", pickup: "When will you pick it up?", noSlots: "No free times left today.",
     pay: "Payment", payClick: "Click", payClickSub: "Now, in Telegram", payTill: "At the till", payTillSub: "When you pick up", total: "Total",
@@ -256,7 +259,7 @@ const W = {
     st: ["Sent", "Accepted", "Ready"], waitPay: "Waiting for payment", cancel: "Cancel order", cancelled: "Order cancelled", activeT: "Your order",
     ready: "☕ Ready — pick it up at the till", accepted: "Being made for", sentSt: "Waiting for the café to accept", payCancelled: "Payment didn't go through — you can order again",
     sum: "sum", size: "Size", qty: "Quantity", change: "Change",
-    err: { not_joined: "Please share your number first", blocked: "Pre-ordering is closed for now: the last order wasn't collected", active: "You already have an active order", closed: "The café isn't taking pre-orders right now", slot_gone: "That time is taken — please choose another", too_many: "Too many drinks", payment_unavailable: "Click payment isn't available right now", server: "Something went wrong. Please try again", unauthorized: "Please open the app from @friendscofe_bot", net: "No connection. Check your internet" } },
+    err: { not_joined: "Please share your number first", no_name: "Please write your first and last name first", bad_name: "Please write your first and last name in letters, for example: Ali Valiyev", blocked: "Pre-ordering is closed for now: the last order wasn't collected", active: "You already have an active order", closed: "The café isn't taking pre-orders right now", slot_gone: "That time is taken — please choose another", too_many: "Too many drinks", payment_unavailable: "Click payment isn't available right now", server: "Something went wrong. Please try again", unauthorized: "Please open the app from @friendscofe_bot", net: "No connection. Check your internet" } },
 };
 const CATN = { hot: { ru: "Горячий кофе", uz: "Issiq qahva", en: "Hot coffee" }, iced: { ru: "Холодный кофе", uz: "Sovuq qahva", en: "Iced coffee" }, noncoffee: { ru: "Не кофе", uz: "Qahvasiz", en: "No coffee" }, tea: { ru: "Чай", uz: "Choy", en: "Tea" }, lemon: { ru: "Лимонады", uz: "Limonadlar", en: "Lemonades" }, shake: { ru: "Фраппе и смузи", uz: "Frappe va smuzi", en: "Frappe & smoothies" } };
 
@@ -343,7 +346,8 @@ function renderHome() {
   const c = D.card;
   if (c) {
     const s = Math.min(c.stamps, 10);
-    $("#cardBox").innerHTML = `<div class="card"><div class="hi">${t().hi(c.name || "")}</div><div class="sub">${t().card} · ${t().left(10 - s)}</div>
+    const ask = c.needName ? `<div class="join name"><h2>${t().nameT}</h2><p>${t().nameP}</p><input class="inp" id="nameIn" maxlength="60" autocomplete="name" placeholder="${t().namePh}"><button class="btn" id="nameBtn">${t().nameBtn}</button></div>` : "";
+    $("#cardBox").innerHTML = ask + `<div class="card"><div class="hi">${t().hi(c.name || "")}</div><div class="sub">${t().card} · ${t().left(10 - s)}</div>
       <div class="cups">${Array.from({ length: 10 }, (_, i) => i === 9 && s < 10 ? `<div class="cup gift"><span>🎁</span></div>` : `<div class="cup ${i < s ? "full" : ""}" style="--d:${i}">${CUP}</div>`).join("")}</div>
       <div class="code"><div><small>${t().code}</small><b>${c.code || "—"}</b></div><span class="stamp">☕ ${t().stamps(s)}</span></div></div>`;
     document.querySelectorAll(".cup.full svg").forEach((el, i) => (el.style.animationDelay = `${0.08 * i + 0.15}s`));
@@ -513,7 +517,16 @@ document.addEventListener("click", async (e) => {
     catch { tg.openTelegramLink(BOT); }
     return;
   }
-  if (el.id === "tOrder") { if (!D.joined) { haptic("err"); return toast(t().err.not_joined); } if (D.active) { haptic("err"); return toast(t().err.active); } renderCafes(); return go("cafes"); }
+  if (el.id === "nameBtn") {
+    const v = ($("#nameIn")?.value || "").trim();
+    if (!v) { haptic("err"); $("#nameIn")?.focus(); return; }
+    el.disabled = true;
+    const r = await api("name", { name: v });
+    el.disabled = false;
+    if (r.error) { haptic("err"); return toast(t().err[r.error] || t().err.server); }
+    haptic("ok"); toast(t().nameOk(r.name)); D.card.name = r.name; D.card.needName = false; renderHome(); return;
+  }
+  if (el.id === "tOrder") { if (!D.joined) { haptic("err"); return toast(t().err.not_joined); } if (D.card?.needName) { haptic("err"); $("#nameIn")?.focus(); return toast(t().err.no_name); } if (D.active) { haptic("err"); return toast(t().err.active); } renderCafes(); return go("cafes"); }
   if (el.id === "tMenu") { curCat = null; renderMenu(); return go("menu"); }
   if (el.id === "tBot") { try { tg.openTelegramLink(BOT); tg.close(); } catch { location.href = BOT; } return; }
   if (el.dataset.cafe) { if (cafe !== el.dataset.cafe) cart = []; cafe = el.dataset.cafe; curCat = null; haptic(); renderMenu(); return go("menu"); }
@@ -532,6 +545,7 @@ document.addEventListener("click", async (e) => {
 });
 function openSheetMain() { const k = sheetItem.sizes.length ? sheetItem.sizes.indexOf(sheetSize) : 0; setMain(`${t().add} · ${fmt((sheetItem.prices[k] ?? sheetItem.prices[0]) * sheetQty)} ${t().sum}`, addToCart); }
 $("#veil").addEventListener("click", closeSheet);
+document.addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target.id === "nameIn") { e.preventDefault(); $("#nameBtn")?.click(); } });
 
 /* ---------- start ---------- */
 (async function start() {
