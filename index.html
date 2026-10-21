@@ -227,7 +227,7 @@ const W = {
     joined: "Готово! Обновляем карту…", nameT: "Как вас зовут?", nameP: "Имя и фамилия — так вас узнают на кассе.", namePh: "Например: Али Валиев", nameBtn: "Сохранить", nameOk: n => `Спасибо, ${n}!`, where: "Где заберёте?", open: "Открыто для предзаказа", closedNow: h => `Предзаказ Пн–Сб ${h}`,
     closedNote: "Сейчас предзаказ закрыт — меню можно посмотреть.", from: "от", add: "Добавить", added: "Добавлено", max: m => `В одном заказе до ${m} напитков`,
     cartBtn: (n, s) => `Корзина · ${n} · ${s} сум`, yourOrder: "Ваш заказ", pickup: "Когда заберёте?", noSlots: "На сегодня свободного времени больше нет.",
-    pay: "Оплата", payClick: "Click", payClickSub: "Сейчас, в Telegram", payTill: "На кассе", payTillSub: "Когда заберёте", total: "Итого",
+    pay: "Оплата", payClick: "Click", payClickSub: "Сейчас, через Click", payOpen: "Оплатить через Click", payHint: "Заказ уйдёт в кафе сразу после оплаты", payTill: "На кассе", payTillSub: "Когда заберёте", total: "Итого",
     rule: "Если не заберёте, предзаказ закроется на 7 дней.", placeBtn: s => `Заказать · ${s} сум`, payBtn: s => `Оплатить · ${s} сум`, empty: "Корзина пуста",
     toMenu: "К меню", sent: "Заказ отправлен!", paid: "Оплачено!", pickAt: t => `Заберите в ${t}`, showCode: c => `На кассе покажите код ${c}`, home: "На главную",
     st: ["Отправлен", "Принят", "Готов"], waitPay: "Ждём оплату", cancel: "Отменить заказ", cancelled: "Заказ отменён", activeT: "Ваш заказ",
@@ -240,7 +240,7 @@ const W = {
     joined: "Tayyor! Karta yangilanmoqda…", nameT: "Ismingizni yozing", nameP: "Ism va familiya — kassada sizni shunday taniymiz.", namePh: "Masalan: Ali Valiyev", nameBtn: "Saqlash", nameOk: n => `Rahmat, ${n}!`, where: "Qayerdan olib ketasiz?", open: "Oldindan buyurtma ochiq", closedNow: h => `Oldindan buyurtma Du–Sh ${h}`,
     closedNote: "Hozir oldindan buyurtma yopiq — menyuni koʻrish mumkin.", from: "", add: "Qoʻshish", added: "Qoʻshildi", max: m => `Bir buyurtmada ${m} tagacha ichimlik`,
     cartBtn: (n, s) => `Savat · ${n} · ${s} soʻm`, yourOrder: "Buyurtmangiz", pickup: "Qachon olib ketasiz?", noSlots: "Bugun boʻsh vaqt qolmadi.",
-    pay: "Toʻlov", payClick: "Click", payClickSub: "Hozir, Telegramda", payTill: "Kassada", payTillSub: "Olib ketayotganda", total: "Jami",
+    pay: "Toʻlov", payClick: "Click", payClickSub: "Hozir, Click orqali", payOpen: "Click orqali toʻlash", payHint: "Toʻlovdan soʻng buyurtma darhol kafega yuboriladi", payTill: "Kassada", payTillSub: "Olib ketayotganda", total: "Jami",
     rule: "Olib ketmasangiz, oldindan buyurtma 7 kunga yopiladi.", placeBtn: s => `Buyurtma berish · ${s} soʻm`, payBtn: s => `Toʻlash · ${s} soʻm`, empty: "Savat boʻsh",
     toMenu: "Menyuga", sent: "Buyurtma yuborildi!", paid: "Toʻlandi!", pickAt: t => `${t} da olib keting`, showCode: c => `Kassada ${c} kodini koʻrsating`, home: "Bosh sahifa",
     st: ["Yuborildi", "Qabul qilindi", "Tayyor"], waitPay: "Toʻlov kutilmoqda", cancel: "Buyurtmani bekor qilish", cancelled: "Buyurtma bekor qilindi", activeT: "Buyurtmangiz",
@@ -253,7 +253,7 @@ const W = {
     joined: "Done! Updating your card…", nameT: "What is your name?", nameP: "First and last name — that's how the till will know you.", namePh: "For example: Ali Valiyev", nameBtn: "Save", nameOk: n => `Thank you, ${n}!`, where: "Where will you pick it up?", open: "Open for pre-orders", closedNow: h => `Pre-orders Mon–Sat ${h}`,
     closedNote: "Pre-orders are closed right now — you can still browse the menu.", from: "from", add: "Add", added: "Added", max: m => `Up to ${m} drinks per order`,
     cartBtn: (n, s) => `Cart · ${n} · ${s} sum`, yourOrder: "Your order", pickup: "When will you pick it up?", noSlots: "No free times left today.",
-    pay: "Payment", payClick: "Click", payClickSub: "Now, in Telegram", payTill: "At the till", payTillSub: "When you pick up", total: "Total",
+    pay: "Payment", payClick: "Click", payClickSub: "Now, via Click", payOpen: "Pay with Click", payHint: "Your order goes to the café as soon as it's paid", payTill: "At the till", payTillSub: "When you pick up", total: "Total",
     rule: "If you don't pick it up, pre-ordering closes for 7 days.", placeBtn: s => `Place order · ${s} sum`, payBtn: s => `Pay · ${s} sum`, empty: "Your cart is empty",
     toMenu: "To the menu", sent: "Order sent!", paid: "Paid!", pickAt: t => `Pick it up at ${t}`, showCode: c => `Show code ${c} at the till`, home: "Home",
     st: ["Sent", "Accepted", "Ready"], waitPay: "Waiting for payment", cancel: "Cancel order", cancelled: "Order cancelled", activeT: "Your order",
@@ -371,6 +371,7 @@ function renderActive() {
     <div class="steps">${[0, 1, 2].map((i) => `<i class="${i < idx ? "on" : i === idx ? "on now" : ""}"></i>`).join("")}</div>
     <div class="steplbl">${t().st.map((s) => `<span>${s}</span>`).join("")}</div>
     <div style="margin-top:10px;font-weight:600">${a.status === "accepted" ? line : line + " · " + pick}</div>
+    ${a.status === "awaiting_payment" && a.pay_url ? `<p class="note" style="margin:8px 0 12px">${t().payHint}</p><button class="btn" id="payNowBtn">💳 ${t().payOpen} · ${fmt(a.total)} ${t().sum}</button>` : ""}
     ${!a.paid && ["new", "awaiting_payment"].includes(a.status) ? `<button class="link" id="cancelBtn" data-id="${a.id}">${t().cancel}</button>` : ""}</div>`;
 }
 
@@ -471,6 +472,11 @@ async function place() {
   const r = await api("order", { cafe, slot, pay: D.click ? pay : "till", items: cart.map((x) => ({ id: x.id, size: x.size, qty: x.qty })) });
   try { tg.MainButton.hideProgress(); } catch {}
   if (r.error) { haptic("err"); toast(t().err[r.error] || t().err.server); if (r.error === "slot_gone") renderCart(); return; }
+  if (r.payUrl) {
+    cart = []; openPay(r.payUrl);
+    await refresh(); stack = ["home"]; go("home", false); checkStatus();
+    return;
+  }
   if (r.invoice) {
     tg.openInvoice(r.invoice, (status) => {
       if (status === "paid") { cart = []; showDone(r, true); }
@@ -480,6 +486,9 @@ async function place() {
     return;
   }
   cart = []; showDone(r, false);
+}
+function openPay(url) {
+  try { tg.openLink(url); } catch { window.open(url, "_blank"); }
 }
 function showDone(r, paid) {
   haptic("ok");
@@ -503,10 +512,25 @@ function startPoll() {
   poll = setInterval(async () => {
     if (!D?.joined) { const r = await refresh(); if (!r?.error && D.joined && stack[stack.length - 1] === "home") renderHome(); return; }
     if (!D.active) return;
-    const r = await api("status");
-    if (r.active?.status !== D.active?.status) { if (r.active?.status === "ready") haptic("ok"); D.active = r.active; if (stack[stack.length - 1] === "home") renderActive(); }
+    await checkStatus();
   }, 12000);
 }
+async function checkStatus() {
+  if (!D?.active) return;
+  const r = await api("status");
+  if (r.error) return;
+  const was = D.active;
+  if (r.active?.status !== was?.status || !!r.active?.paid !== !!was?.paid) {
+    if (r.active?.status === "ready") haptic("ok");
+    if (was?.status === "awaiting_payment" && r.active?.paid) { haptic("ok"); toast(t().paid); }
+    else if (was?.status === "awaiting_payment" && !r.active) toast(t().payCancelled);
+    D.active = r.active; if (stack[stack.length - 1] === "home") renderActive();
+  }
+  clearTimeout(checkStatus.t);
+  if (D.active?.status === "awaiting_payment") checkStatus.t = setTimeout(checkStatus, 4000);
+}
+document.addEventListener("visibilitychange", () => { if (!document.hidden) checkStatus(); });
+try { tg.onEvent("activated", () => checkStatus()); } catch {}
 
 /* ---------- events ---------- */
 document.addEventListener("click", async (e) => {
@@ -540,6 +564,7 @@ document.addEventListener("click", async (e) => {
   if (el.dataset.slot) { slot = el.dataset.slot; haptic("light"); return drawSlots(); }
   if (el.dataset.pay) { pay = el.dataset.pay; haptic("light"); document.querySelectorAll(".pay button").forEach((b) => b.classList.toggle("on", b.dataset.pay === pay)); return updateMain(); }
   if (el.id === "toMenu") return back();
+  if (el.id === "payNowBtn") { if (D.active?.pay_url) openPay(D.active.pay_url); return; }
   if (el.id === "cancelBtn") { const r = await api("cancel", { id: Number(el.dataset.id) }); if (r.ok) { toast(t().cancelled); D.active = null; renderActive(); } else toast(t().err.server); return; }
   if (el.id === "doneHome") { stack = ["home"]; return go("home", false); }
 });
@@ -567,7 +592,7 @@ document.addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target.
   if (sp === "menu") { renderMenu(); stack = ["home", "menu"]; go("menu", false); try { tg.BackButton.show(); } catch {} }
   else if (sp === "order" && D.joined && !D.active) { renderCafes(); stack = ["home", "cafes"]; go("cafes", false); try { tg.BackButton.show(); } catch {} }
   else go("home", false);
-  startPoll();
+  startPoll(); checkStatus();
 })();
 </script>
 </body>
