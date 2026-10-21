@@ -261,7 +261,7 @@ const W = {
     sum: "sum", size: "Size", qty: "Quantity", change: "Change",
     err: { not_joined: "Please share your number first", no_name: "Please write your first and last name first", bad_name: "Please write your first and last name in letters, for example: Ali Valiyev", blocked: "Pre-ordering is closed for now: the last order wasn't collected", active: "You already have an active order", closed: "The café isn't taking pre-orders right now", slot_gone: "That time is taken — please choose another", too_many: "Too many drinks", payment_unavailable: "Click payment isn't available right now", server: "Something went wrong. Please try again", unauthorized: "Please open the app from @friendscofe_bot", net: "No connection. Check your internet" } },
 };
-const CATN = { hot: { ru: "Горячий кофе", uz: "Issiq qahva", en: "Hot coffee" }, iced: { ru: "Холодный кофе", uz: "Sovuq qahva", en: "Iced coffee" }, noncoffee: { ru: "Не кофе", uz: "Qahvasiz", en: "No coffee" }, tea: { ru: "Чай", uz: "Choy", en: "Tea" }, lemon: { ru: "Лимонады", uz: "Limonadlar", en: "Lemonades" }, shake: { ru: "Фраппе и смузи", uz: "Frappe va smuzi", en: "Frappe & smoothies" } };
+const CATN = { hot: { ru: "Горячий кофе", uz: "Issiq qahva", en: "Hot coffee" }, iced: { ru: "Холодный кофе", uz: "Sovuq qahva", en: "Iced coffee" }, noncoffee: { ru: "Не кофе", uz: "Qahvasiz", en: "No coffee" }, tea: { ru: "Чай", uz: "Choy", en: "Tea" }, lemon: { ru: "Лимонады", uz: "Limonadlar", en: "Lemonades" }, shake: { ru: "Фраппе и смузи", uz: "Frappe va smuzi", en: "Frappe & smoothies" }, detox: { ru: "Детокс", uz: "Detoks", en: "Detox" } };
 
 /* ---------- state ---------- */
 let D = null, L = "ru", cafe = null, cart = [], slot = null, pay = "till", stack = ["home"], poll = null, slotsCache = [];
@@ -285,7 +285,7 @@ async function api(action, extra = {}) {
 
 /* ---------- illustrations (flat, brand colours) — replaced by photo_url when a photo exists ---------- */
 const TINT = { esp: "#3c2418", amer: "#4a2c1d", cap: "#b98a62", latte: "#c9a07a", flat: "#a87650", raf: "#e3c9a6", spanish: "#c79a6b", iamer: "#5a3a2a", icap: "#b98a62", ilatte: "#cfa77e", bumble: "#e08a2c", tonic: "#7a4b2f",
-  icetea: "#b5652a", mango: "#e8962f", mojito: "#9cc45a", pine: "#e6c34a", cocoa: "#5c3624", matcha: "#8aa357", imatcha: "#9bb466", plain: "#a8592a", lemon: "#d7a43a", berry: "#9c3d55", buck: "#e0892b", ginger: "#d98a3a", frappe: "#a9805e", shake: "#f0c6c6", smoothie: "#b84a6b" };
+  icetea: "#b5652a", mango: "#e8962f", mojito: "#9cc45a", pine: "#e6c34a", cocoa: "#5c3624", matcha: "#8aa357", imatcha: "#9bb466", plain: "#a8592a", lemon: "#d7a43a", berry: "#9c3d55", buck: "#e0892b", ginger: "#d98a3a", frappe: "#a9805e", shake: "#f0c6c6", smoothie: "#b84a6b", pinecelery: "#a7c25a", kiwisorrel: "#8fb84a", applecelery: "#b5cf6a" };
 function art(it, anim = true) {
   const c = TINT[it.id] || "#8c4a24", cat = it.cat;
   const steam = anim ? `<g class="steam" stroke="#8c4a24" stroke-width="2.6" fill="none" stroke-linecap="round" opacity=".8"><path d="M38 14c-4 4 4 6 0 10"/><path d="M50 10c-4 4 4 6 0 10"/><path d="M62 14c-4 4 4 6 0 10"/></g>` : "";
@@ -391,7 +391,7 @@ function renderMenu() {
   const c = D.cafes.find((x) => x.id === cafe);
   $("#menuTitle").textContent = t().menu;
   $("#cafeSwitch").textContent = `📍 ${c.name[L]}`;
-  const cats = D.cats.filter((k) => items().some((m) => m.cat === k));
+  const cats = [...new Set([...D.cats, ...items().map((m) => m.cat)])].filter((k) => CATN[k] && items().some((m) => m.cat === k));
   $("#chips").innerHTML = cats.map((k) => `<button class="chip ${k === curCat ? "on" : ""}" data-cat="${k}">${CATN[k][L]}</button>`).join("");
   $("#closedNote").innerHTML = c.open ? "" : `<div class="closed">⏰ ${t().closedNote}</div>`;
   $("#menuBody").innerHTML = cats.map((k) => `<div class="sect" id="s-${k}">${CATN[k][L]}</div><div class="grid">${items().filter((m) => m.cat === k).map((m, i) => {
