@@ -227,44 +227,44 @@ const W = {
     joined: "Готово! Обновляем карту…", nameT: "Как вас зовут?", nameP: "Имя и фамилия — так вас узнают на кассе.", namePh: "Например: Али Валиев", nameBtn: "Сохранить", nameOk: n => `Спасибо, ${n}!`, where: "Где заберёте?", open: "Открыто для предзаказа", closedNow: h => `Предзаказ Пн–Сб ${h}`,
     closedNote: "Сейчас предзаказ закрыт — меню можно посмотреть.", from: "от", add: "Добавить", added: "Добавлено", max: m => `В одном заказе до ${m} напитков`,
     cartBtn: (n, s) => `Корзина · ${n} · ${s} сум`, yourOrder: "Ваш заказ", pickup: "Когда заберёте?", noSlots: "На сегодня свободного времени больше нет.",
-    pay: "Оплата", payClick: "Click", payClickSub: "Сейчас, через Click", payOpen: "Оплатить через Click", payHint: "Заказ уйдёт в кафе сразу после оплаты", payTill: "На кассе", payTillSub: "Когда заберёте", total: "Итого",
+    pay: "Оплата", payVia: all => all ? "Оплата сразу онлайн: Click, Payme, Uzum, Uzcard, Humo или Visa. Заказ уйдёт в кафе после оплаты." : "Оплата сразу через Click. Заказ уйдёт в кафе после оплаты.", paySoon: "Предзаказ скоро откроется — подключаем онлайн-оплату. Пока можно посмотреть меню.", payOpen: "Оплатить", payHint: "Заказ уйдёт в кафе сразу после оплаты", total: "Итого",
     rule: "Если не заберёте, предзаказ закроется на 7 дней.", placeBtn: s => `Заказать · ${s} сум`, payBtn: s => `Оплатить · ${s} сум`, empty: "Корзина пуста",
     toMenu: "К меню", sent: "Заказ отправлен!", paid: "Оплачено!", pickAt: t => `Заберите в ${t}`, showCode: c => `На кассе покажите код ${c}`, home: "На главную",
     st: ["Отправлен", "Принят", "Готов"], waitPay: "Ждём оплату", cancel: "Отменить заказ", cancelled: "Заказ отменён", activeT: "Ваш заказ",
     ready: "☕ Готов — заберите на кассе", accepted: "Готовим к", sentSt: "Ждём подтверждения кафе", payCancelled: "Оплата не прошла — заказ можно оформить снова",
     sum: "сум", size: "Размер", qty: "Количество", change: "Сменить",
-    err: { not_joined: "Сначала поделитесь номером", no_name: "Сначала напишите имя и фамилию", bad_name: "Напишите имя и фамилию буквами, например: Али Валиев", blocked: "Предзаказ временно закрыт: прошлый заказ не забрали", active: "У вас уже есть активный заказ", closed: "Кафе сейчас не принимает предзаказы", slot_gone: "Это время уже занято — выберите другое", too_many: "Слишком много напитков", payment_unavailable: "Оплата Click сейчас недоступна", server: "Что-то пошло не так. Попробуйте ещё раз", unauthorized: "Откройте приложение из бота @friendscofe_bot", net: "Нет связи. Проверьте интернет" } },
+    err: { not_joined: "Сначала поделитесь номером", no_name: "Сначала напишите имя и фамилию", bad_name: "Напишите имя и фамилию буквами, например: Али Валиев", blocked: "Предзаказ временно закрыт: прошлый заказ не забрали", active: "У вас уже есть активный заказ", closed: "Кафе сейчас не принимает предзаказы", slot_gone: "Это время уже занято — выберите другое", too_many: "Слишком много напитков", payment_unavailable: "Оплата сейчас недоступна — попробуйте чуть позже", pay_soon: "Предзаказ скоро откроется — подключаем онлайн-оплату", server: "Что-то пошло не так. Попробуйте ещё раз", unauthorized: "Откройте приложение из бота @friendscofe_bot", net: "Нет связи. Проверьте интернет" } },
   uz: { hi: n => `Assalomu alaykum${n ? ", " + n : ""}!`, card: "Kofe kartangiz", left: n => n > 0 ? `Sovgʻagacha ${n} ta` : "🎁 Qahva M — sovgʻa!", code: "Kassada kodni koʻrsating", stamps: n => `${n}/10`,
     order: "Oldindan buyurtma", orderSub: "Navbatsiz olib keting", menu: "Menyu", menuSub: "Barcha ichimliklar va narxlar", bot: "Bot", botSub: "Profil va tashriflar",
     joinT: "Friends Clubga qoʻshiling", joinP: "Har bir ichimlik uchun shtamp, 10-chi qahva — sovgʻa. Ikkita shtamp darhol.", join: "📱 Raqamni ulashish",
     joined: "Tayyor! Karta yangilanmoqda…", nameT: "Ismingizni yozing", nameP: "Ism va familiya — kassada sizni shunday taniymiz.", namePh: "Masalan: Ali Valiyev", nameBtn: "Saqlash", nameOk: n => `Rahmat, ${n}!`, where: "Qayerdan olib ketasiz?", open: "Oldindan buyurtma ochiq", closedNow: h => `Oldindan buyurtma Du–Sh ${h}`,
     closedNote: "Hozir oldindan buyurtma yopiq — menyuni koʻrish mumkin.", from: "", add: "Qoʻshish", added: "Qoʻshildi", max: m => `Bir buyurtmada ${m} tagacha ichimlik`,
     cartBtn: (n, s) => `Savat · ${n} · ${s} soʻm`, yourOrder: "Buyurtmangiz", pickup: "Qachon olib ketasiz?", noSlots: "Bugun boʻsh vaqt qolmadi.",
-    pay: "Toʻlov", payClick: "Click", payClickSub: "Hozir, Click orqali", payOpen: "Click orqali toʻlash", payHint: "Toʻlovdan soʻng buyurtma darhol kafega yuboriladi", payTill: "Kassada", payTillSub: "Olib ketayotganda", total: "Jami",
+    pay: "Toʻlov", payVia: all => all ? "Toʻlov hozir onlayn: Click, Payme, Uzum, Uzcard, Humo yoki Visa. Buyurtma toʻlovdan soʻng kafega yuboriladi." : "Toʻlov hozir Click orqali. Buyurtma toʻlovdan soʻng kafega yuboriladi.", paySoon: "Oldindan buyurtma tez orada ochiladi — onlayn toʻlovni ulayapmiz. Hozircha menyuni koʻrishingiz mumkin.", payOpen: "Toʻlash", payHint: "Toʻlovdan soʻng buyurtma darhol kafega yuboriladi", total: "Jami",
     rule: "Olib ketmasangiz, oldindan buyurtma 7 kunga yopiladi.", placeBtn: s => `Buyurtma berish · ${s} soʻm`, payBtn: s => `Toʻlash · ${s} soʻm`, empty: "Savat boʻsh",
     toMenu: "Menyuga", sent: "Buyurtma yuborildi!", paid: "Toʻlandi!", pickAt: t => `${t} da olib keting`, showCode: c => `Kassada ${c} kodini koʻrsating`, home: "Bosh sahifa",
     st: ["Yuborildi", "Qabul qilindi", "Tayyor"], waitPay: "Toʻlov kutilmoqda", cancel: "Buyurtmani bekor qilish", cancelled: "Buyurtma bekor qilindi", activeT: "Buyurtmangiz",
     ready: "☕ Tayyor — kassadan oling", accepted: "Tayyorlanmoqda:", sentSt: "Kafe tasdiqlashini kutyapmiz", payCancelled: "Toʻlov oʻtmadi — qaytadan buyurtma berishingiz mumkin",
     sum: "soʻm", size: "Hajmi", qty: "Soni", change: "Oʻzgartirish",
-    err: { not_joined: "Avval raqamingizni ulashing", no_name: "Avval ism va familiyangizni yozing", bad_name: "Ism va familiyani harflar bilan yozing, masalan: Ali Valiyev", blocked: "Oldindan buyurtma vaqtincha yopiq: oxirgi buyurtma olib ketilmagan", active: "Sizda faol buyurtma bor", closed: "Kafe hozir oldindan buyurtma qabul qilmaydi", slot_gone: "Bu vaqt band — boshqasini tanlang", too_many: "Ichimliklar juda koʻp", payment_unavailable: "Click toʻlovi hozir ishlamayapti", server: "Xatolik yuz berdi. Qaytadan urinib koʻring", unauthorized: "Ilovani @friendscofe_bot orqali oching", net: "Aloqa yoʻq. Internetni tekshiring" } },
+    err: { not_joined: "Avval raqamingizni ulashing", no_name: "Avval ism va familiyangizni yozing", bad_name: "Ism va familiyani harflar bilan yozing, masalan: Ali Valiyev", blocked: "Oldindan buyurtma vaqtincha yopiq: oxirgi buyurtma olib ketilmagan", active: "Sizda faol buyurtma bor", closed: "Kafe hozir oldindan buyurtma qabul qilmaydi", slot_gone: "Bu vaqt band — boshqasini tanlang", too_many: "Ichimliklar juda koʻp", payment_unavailable: "Toʻlov hozir ishlamayapti — birozdan soʻng urinib koʻring", pay_soon: "Oldindan buyurtma tez orada ochiladi — onlayn toʻlovni ulayapmiz", server: "Xatolik yuz berdi. Qaytadan urinib koʻring", unauthorized: "Ilovani @friendscofe_bot orqali oching", net: "Aloqa yoʻq. Internetni tekshiring" } },
   en: { hi: n => `Hello${n ? ", " + n : ""}!`, card: "Your coffee card", left: n => n > 0 ? `${n} to your gift` : "🎁 A coffee M is on us!", code: "Show this code at the till", stamps: n => `${n}/10`,
     order: "Order ahead", orderSub: "Skip the queue", menu: "Menu", menuSub: "All drinks and prices", bot: "Bot", botSub: "Profile and visits",
     joinT: "Join Friends Club", joinP: "A stamp for every drink, the 10th coffee is on us. Two stamps right away.", join: "📱 Share my number",
     joined: "Done! Updating your card…", nameT: "What is your name?", nameP: "First and last name — that's how the till will know you.", namePh: "For example: Ali Valiyev", nameBtn: "Save", nameOk: n => `Thank you, ${n}!`, where: "Where will you pick it up?", open: "Open for pre-orders", closedNow: h => `Pre-orders Mon–Sat ${h}`,
     closedNote: "Pre-orders are closed right now — you can still browse the menu.", from: "from", add: "Add", added: "Added", max: m => `Up to ${m} drinks per order`,
     cartBtn: (n, s) => `Cart · ${n} · ${s} sum`, yourOrder: "Your order", pickup: "When will you pick it up?", noSlots: "No free times left today.",
-    pay: "Payment", payClick: "Click", payClickSub: "Now, via Click", payOpen: "Pay with Click", payHint: "Your order goes to the café as soon as it's paid", payTill: "At the till", payTillSub: "When you pick up", total: "Total",
+    pay: "Payment", payVia: all => all ? "Pay now online: Click, Payme, Uzum, Uzcard, Humo or Visa. The order goes to the café once it's paid." : "Pay now with Click. The order goes to the café once it's paid.", paySoon: "Pre-orders open soon — we're connecting online payment. You can browse the menu for now.", payOpen: "Pay", payHint: "Your order goes to the café as soon as it's paid", total: "Total",
     rule: "If you don't pick it up, pre-ordering closes for 7 days.", placeBtn: s => `Place order · ${s} sum`, payBtn: s => `Pay · ${s} sum`, empty: "Your cart is empty",
     toMenu: "To the menu", sent: "Order sent!", paid: "Paid!", pickAt: t => `Pick it up at ${t}`, showCode: c => `Show code ${c} at the till`, home: "Home",
     st: ["Sent", "Accepted", "Ready"], waitPay: "Waiting for payment", cancel: "Cancel order", cancelled: "Order cancelled", activeT: "Your order",
     ready: "☕ Ready — pick it up at the till", accepted: "Being made for", sentSt: "Waiting for the café to accept", payCancelled: "Payment didn't go through — you can order again",
     sum: "sum", size: "Size", qty: "Quantity", change: "Change",
-    err: { not_joined: "Please share your number first", no_name: "Please write your first and last name first", bad_name: "Please write your first and last name in letters, for example: Ali Valiyev", blocked: "Pre-ordering is closed for now: the last order wasn't collected", active: "You already have an active order", closed: "The café isn't taking pre-orders right now", slot_gone: "That time is taken — please choose another", too_many: "Too many drinks", payment_unavailable: "Click payment isn't available right now", server: "Something went wrong. Please try again", unauthorized: "Please open the app from @friendscofe_bot", net: "No connection. Check your internet" } },
+    err: { not_joined: "Please share your number first", no_name: "Please write your first and last name first", bad_name: "Please write your first and last name in letters, for example: Ali Valiyev", blocked: "Pre-ordering is closed for now: the last order wasn't collected", active: "You already have an active order", closed: "The café isn't taking pre-orders right now", slot_gone: "That time is taken — please choose another", too_many: "Too many drinks", payment_unavailable: "Payment isn't available right now — please try again a little later", pay_soon: "Pre-orders open soon — we're connecting online payment", server: "Something went wrong. Please try again", unauthorized: "Please open the app from @friendscofe_bot", net: "No connection. Check your internet" } },
 };
 const CATN = { hot: { ru: "Горячий кофе", uz: "Issiq qahva", en: "Hot coffee" }, iced: { ru: "Холодный кофе", uz: "Sovuq qahva", en: "Iced coffee" }, noncoffee: { ru: "Не кофе", uz: "Qahvasiz", en: "No coffee" }, tea: { ru: "Чай", uz: "Choy", en: "Tea" }, lemon: { ru: "Лимонады", uz: "Limonadlar", en: "Lemonades" }, shake: { ru: "Фраппе и смузи", uz: "Frappe va smuzi", en: "Frappe & smoothies" }, detox: { ru: "Детокс", uz: "Detoks", en: "Detox" } };
 
 /* ---------- state ---------- */
-let D = null, L = "ru", cafe = null, cart = [], slot = null, pay = "till", stack = ["home"], poll = null, slotsCache = [];
+let D = null, L = "ru", cafe = null, cart = [], slot = null, stack = ["home"], poll = null, slotsCache = [];
 const t = () => W[L];
 const nm = (it) => L === "uz" ? it.name_uz : L === "en" ? (it.name_en || it.name_ru) : it.name_ru;
 const ds = (it) => (L === "uz" ? it.desc_uz : L === "en" ? it.desc_en : it.desc_ru) || "";
@@ -332,9 +332,9 @@ function updateMain() {
   if ($("#sheet").classList.contains("on")) return;
   if (cur === "menu" && count()) return setMain(t().cartBtn(count(), fmt(sum())), () => { go("cart"); renderCart(); });
   if (cur === "cart" && count()) {
-    const ready = slot && cafeOpen();
+    const ready = slot && cafeOpen() && D.pay;
     if (!ready) return setMain(null);
-    return setMain(pay === "click" ? t().payBtn(fmt(sum())) : t().placeBtn(fmt(sum())), place);
+    return setMain(t().payBtn(fmt(sum())), place);
   }
   setMain(null);
 }
@@ -453,7 +453,7 @@ async function renderCart() {
   $("#cartLines").innerHTML = cart.map((x, i) => { const it = find(x.id); return `<div class="line"><div class="ph">${pic(it, false)}</div><div class="nm"><b>${nm(it).replace("★ ", "")}${x.size ? " " + x.size : ""}</b><small>${fmt(priceOf(x) * x.qty)} ${t().sum}</small></div><div class="step"><button data-cq="-1" data-i="${i}">−</button><span>${x.qty}</span><button data-cq="1" data-i="${i}">+</button></div></div>`; }).join("");
   if (!c.open) { $("#checkout").innerHTML = `<div class="closed" style="margin-top:16px">⏰ ${t().closedNote}</div>`; return updateMain(); }
   $("#checkout").innerHTML = `<div class="label">${t().pickup}</div><div id="slotBox"><div class="note">…</div></div>
-    ${D.click ? `<div class="label">${t().pay}</div><div class="pay"><button data-pay="click" class="${pay === "click" ? "on" : ""}">💳 ${t().payClick}<small>${t().payClickSub}</small></button><button data-pay="till" class="${pay === "till" ? "on" : ""}">🏪 ${t().payTill}<small>${t().payTillSub}</small></button></div>` : ""}
+    <div class="label">${t().pay}</div><div class="note">${D.pay ? t().payVia(D.pay === "rahmat") : t().paySoon}</div>
     <div class="total"><span>${t().total}</span><span>${fmt(sum())} ${t().sum}</span></div><div class="note">${t().rule}</div>`;
   const r = await api("slots", { cafe });
   slotsCache = r.slots || [];
@@ -469,7 +469,7 @@ function drawSlots() {
 }
 async function place() {
   try { tg.MainButton.showProgress(); } catch {}
-  const r = await api("order", { cafe, slot, pay: D.click ? pay : "till", items: cart.map((x) => ({ id: x.id, size: x.size, qty: x.qty })) });
+  const r = await api("order", { cafe, slot, pay: "online", items: cart.map((x) => ({ id: x.id, size: x.size, qty: x.qty })) });
   try { tg.MainButton.hideProgress(); } catch {}
   if (r.error) { haptic("err"); toast(t().err[r.error] || t().err.server); if (r.error === "slot_gone") renderCart(); return; }
   if (r.payUrl) {
@@ -562,7 +562,6 @@ document.addEventListener("click", async (e) => {
   if (el.id === "sheetAdd") return addToCart();
   if (el.dataset.cq) { const x = cart[Number(el.dataset.i)]; const nq = x.qty + Number(el.dataset.cq); if (nq > 0 && count() + Number(el.dataset.cq) > D.maxDrinks) { haptic("err"); return toast(t().max(D.maxDrinks)); } x.qty = nq; if (x.qty <= 0) cart.splice(Number(el.dataset.i), 1); haptic("light"); return renderCart(); }
   if (el.dataset.slot) { slot = el.dataset.slot; haptic("light"); return drawSlots(); }
-  if (el.dataset.pay) { pay = el.dataset.pay; haptic("light"); document.querySelectorAll(".pay button").forEach((b) => b.classList.toggle("on", b.dataset.pay === pay)); return updateMain(); }
   if (el.id === "toMenu") return back();
   if (el.id === "payNowBtn") { if (D.active?.pay_url) openPay(D.active.pay_url); return; }
   if (el.id === "cancelBtn") { const r = await api("cancel", { id: Number(el.dataset.id) }); if (r.ok) { toast(t().cancelled); D.active = null; renderActive(); } else toast(t().err.server); return; }
