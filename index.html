@@ -264,7 +264,7 @@ const W = {
 const CATN = { hot: { ru: "Горячий кофе", uz: "Issiq qahva", en: "Hot coffee" }, iced: { ru: "Холодный кофе", uz: "Sovuq qahva", en: "Iced coffee" }, noncoffee: { ru: "Не кофе", uz: "Qahvasiz", en: "No coffee" }, tea: { ru: "Чай", uz: "Choy", en: "Tea" }, lemon: { ru: "Лимонады", uz: "Limonadlar", en: "Lemonades" }, shake: { ru: "Фраппе и смузи", uz: "Frappe va smuzi", en: "Frappe & smoothies" }, detox: { ru: "Детокс", uz: "Detoks", en: "Detox" } };
 
 /* ---------- state ---------- */
-let D = null, L = "ru", cafe = null, cart = [], slot = null, stack = ["home"], poll = null, slotsCache = [];
+let D = null, L = "ru", cafe = null, cart = [], slot = null, pay = null, stack = ["home"], poll = null, slotsCache = [];
 const t = () => W[L];
 const nm = (it) => L === "uz" ? it.name_uz : L === "en" ? (it.name_en || it.name_ru) : it.name_ru;
 const ds = (it) => (L === "uz" ? it.desc_uz : L === "en" ? it.desc_en : it.desc_ru) || "";
@@ -332,7 +332,8 @@ function updateMain() {
   if ($("#sheet").classList.contains("on")) return;
   if (cur === "menu" && count()) return setMain(t().cartBtn(count(), fmt(sum())), () => { go("cart"); renderCart(); });
   if (cur === "cart" && count()) {
-    const ready = slot && cafeOpen() && D.pay;
+    if (!pay || !(D.pays || []).includes(pay)) pay = (D.pays || [])[0] || null;
+    const ready = slot && cafeOpen() && pay;
     if (!ready) return setMain(null);
     return setMain(t().payBtn(fmt(sum())), place);
   }
@@ -452,8 +453,11 @@ async function renderCart() {
   }
   $("#cartLines").innerHTML = cart.map((x, i) => { const it = find(x.id); return `<div class="line"><div class="ph">${pic(it, false)}</div><div class="nm"><b>${nm(it).replace("★ ", "")}${x.size ? " " + x.size : ""}</b><small>${fmt(priceOf(x) * x.qty)} ${t().sum}</small></div><div class="step"><button data-cq="-1" data-i="${i}">−</button><span>${x.qty}</span><button data-cq="1" data-i="${i}">+</button></div></div>`; }).join("");
   if (!c.open) { $("#checkout").innerHTML = `<div class="closed" style="margin-top:16px">⏰ ${t().closedNote}</div>`; return updateMain(); }
+  if (!pay || !(D.pays || []).includes(pay)) pay = (D.pays || [])[0] || null;
   $("#checkout").innerHTML = `<div class="label">${t().pickup}</div><div id="slotBox"><div class="note">…</div></div>
-    <div class="label">${t().pay}</div><div class="note">${D.pay ? t().payVia(D.pay === "rahmat") : t().paySoon}</div>
+    <div class="label">${t().pay}</div>${!D.pays?.length ? `<div class="note">${t().paySoon}</div>`
+      : D.pays.length === 1 ? `<div class="note">${t().payVia(D.pays[0] === "rahmat")}</div>`
+      : `<div class="pay">${D.pays.map((x) => `<button data-pay="${x}" class="${x === pay ? "on" : ""}">💳 ${PAYN[x] || x}<small>${t().payHint}</small></button>`).join("")}</div>`}
     <div class="total"><span>${t().total}</span><span>${fmt(sum())} ${t().sum}</span></div><div class="note">${t().rule}</div>`;
   const r = await api("slots", { cafe });
   slotsCache = r.slots || [];
@@ -469,7 +473,7 @@ function drawSlots() {
 }
 async function place() {
   try { tg.MainButton.showProgress(); } catch {}
-  const r = await api("order", { cafe, slot, pay: "online", items: cart.map((x) => ({ id: x.id, size: x.size, qty: x.qty })) });
+  const r = await api("order", { cafe, slot, pay, items: cart.map((x) => ({ id: x.id, size: x.size, qty: x.qty })) });
   try { tg.MainButton.hideProgress(); } catch {}
   if (r.error) { haptic("err"); toast(t().err[r.error] || t().err.server); if (r.error === "slot_gone") renderCart(); return; }
   if (r.payUrl) {
@@ -487,6 +491,7 @@ async function place() {
   }
   cart = []; showDone(r, false);
 }
+const PAYN = { payme: "Payme", click_web: "Click", click: "Click", rahmat: "Rahmat" };
 function openPay(url) {
   try { tg.openLink(url); } catch { window.open(url, "_blank"); }
 }
@@ -569,6 +574,13 @@ document.addEventListener("click", async (e) => {
 });
 function openSheetMain() { const k = sheetItem.sizes.length ? sheetItem.sizes.indexOf(sheetSize) : 0; setMain(`${t().add} · ${fmt((sheetItem.prices[k] ?? sheetItem.prices[0]) * sheetQty)} ${t().sum}`, addToCart); }
 $("#veil").addEventListener("click", closeSheet);
+document.addEventListener("click", (e) => {
+  const b = e.target.closest && e.target.closest("[data-pay]");
+  if (!b) return;
+  pay = b.dataset.pay; haptic("light");
+  document.querySelectorAll(".pay button").forEach((x) => x.classList.toggle("on", x.dataset.pay === pay));
+  updateMain();
+});
 document.addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target.id === "nameIn") { e.preventDefault(); $("#nameBtn")?.click(); } });
 
 /* ---------- start ---------- */
