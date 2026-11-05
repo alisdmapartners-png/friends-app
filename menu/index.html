@@ -1,0 +1,289 @@
+<!doctype html>
+<html lang="uz">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Friends — Menu</title>
+<meta name="description" content="Friends coffee menu — choose your drinks and order ahead in Telegram.">
+<meta name="theme-color" content="#f3e6d3">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&family=Onest:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --cream:#f3e6d3; --cream2:#ead7bd; --paper:#fbf5ec; --brown:#3c2418; --caramel:#8c4a24;
+  --line:rgba(60,36,24,.12); --muted:rgba(60,36,24,.62); --ok:#3f7a4a; --err:#a5402b;
+  --r:20px; --ease:cubic-bezier(.2,.8,.2,1);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--cream);color:var(--brown);font:500 15px/1.4 Onest,system-ui,sans-serif}
+body{min-height:100vh;padding-bottom:calc(110px + env(safe-area-inset-bottom))}
+h1,h2,h3{font-family:Nunito,system-ui,sans-serif;letter-spacing:-.01em;margin:0}
+button{font:inherit;color:inherit;border:0;background:none;cursor:pointer}
+a{color:inherit}
+.wrap{max-width:720px;margin:0 auto;padding:16px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 0 6px}
+.logo{font:900 28px/1 Nunito;letter-spacing:-.02em}
+.langs{display:flex;background:var(--cream2);border-radius:999px;padding:3px}
+.langs button{padding:6px 10px;border-radius:999px;font:700 12px Nunito;color:var(--muted);transition:.2s}
+.langs button.on{background:var(--brown);color:var(--cream)}
+.place{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 0 14px}
+.place b{font:800 16px Nunito}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.note{font-size:13px;color:var(--muted)}
+.switch{font:700 13px Nunito;background:var(--cream2);border-radius:999px;padding:7px 12px;white-space:nowrap;text-decoration:none}
+.how{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:14px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.how div{font-size:13px;line-height:1.3}
+.how b{display:block;font:900 20px Nunito;color:var(--caramel)}
+.closed{background:var(--cream2);border-radius:14px;padding:10px 12px;font-size:13px;margin:0 0 12px}
+.mhead{position:sticky;top:0;z-index:5;background:var(--cream);padding:8px 16px 10px;margin:0 -16px}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;padding:9px 14px;border-radius:999px;background:var(--paper);border:1px solid var(--line);font:700 14px Nunito;white-space:nowrap;transition:.2s}
+.chip.on{background:var(--brown);color:var(--cream);border-color:var(--brown)}
+.sect{font:900 20px Nunito;margin:20px 0 10px;scroll-margin-top:70px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (min-width:620px){.grid{grid-template-columns:repeat(3,1fr)}}
+.item{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;text-align:left;display:flex;flex-direction:column;transition:transform .15s}
+.item:active{transform:scale(.97)}
+.ph{aspect-ratio:1;background:var(--cream2);display:grid;place-items:center;position:relative;overflow:hidden;font-size:44px}
+.ph img{width:100%;height:100%;object-fit:cover}
+.ph .q{position:absolute;top:8px;right:8px;background:var(--brown);color:var(--cream);font:800 12px Nunito;min-width:24px;height:24px;border-radius:12px;display:grid;place-items:center;padding:0 7px}
+.item .tx{padding:10px 12px 12px;display:flex;flex-direction:column;gap:3px;flex:1}
+.item b{font:800 15px/1.2 Nunito}
+.item small{color:var(--muted);font-size:12px;line-height:1.3}
+.item .pr{margin-top:auto;padding-top:6px;font:800 14px Nunito;color:var(--caramel)}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:16px;border-radius:18px;background:var(--brown);color:var(--cream);font:800 17px Nunito;text-decoration:none;transition:transform .15s}
+.btn:active{transform:scale(.97)}
+.btn[aria-disabled="true"]{opacity:.45;pointer-events:none}
+.btn.ghost{background:var(--cream2);color:var(--brown)}
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:10;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:linear-gradient(transparent,var(--cream) 30%);transform:translateY(120%);transition:transform .35s var(--ease)}
+.bar.on{transform:none}
+.bar .btn{max-width:688px;margin:0 auto;box-shadow:0 8px 24px rgba(60,36,24,.25)}
+.veil{position:fixed;inset:0;background:rgba(60,36,24,.35);opacity:0;pointer-events:none;transition:opacity .3s;z-index:20}
+.veil.on{opacity:1;pointer-events:auto}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:21;background:var(--paper);border-radius:28px 28px 0 0;max-width:560px;margin:0 auto;transform:translateY(105%);transition:transform .38s var(--ease);max-height:92vh;overflow:auto;padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+.sheet.on{transform:none}
+.sheet .ph{aspect-ratio:16/11;font-size:70px}
+.sheet .x{position:absolute;top:12px;right:12px;z-index:2;width:36px;height:36px;border-radius:50%;background:rgba(251,245,236,.9);font:900 18px Nunito}
+.sheet .in{padding:16px}
+.sheet h3{font-size:24px}
+.sheet p{color:var(--muted);margin:6px 0 14px}
+.label{font:800 15px Nunito;margin:4px 0 8px}
+.seg{display:flex;gap:8px;margin-bottom:14px}
+.seg button{flex:1;padding:12px 6px;border-radius:14px;background:var(--cream);border:2px solid transparent;font:800 15px Nunito;transition:.2s}
+.seg button small{display:block;font:600 12px Onest;color:var(--muted)}
+.seg button.on{border-color:var(--brown);background:var(--paper)}
+.qty{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.step{display:flex;align-items:center;gap:4px;background:var(--cream);border-radius:14px;padding:4px}
+.step button{width:40px;height:40px;border-radius:11px;font:900 20px Nunito;background:var(--paper)}
+.step span{min-width:30px;text-align:center;font:900 18px Nunito}
+.line{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.line .ph{width:56px;height:56px;border-radius:14px;flex:none;font-size:26px}
+.line .nm{flex:1}
+.line .nm b{font:800 15px Nunito;display:block}
+.line .nm small{color:var(--muted)}
+.line .step button{width:32px;height:32px;font-size:17px}
+.line .step span{min-width:22px;font-size:15px}
+.total{display:flex;justify-content:space-between;font:900 18px Nunito;margin:14px 0 6px}
+.steps{margin:12px 0 16px;padding:0;list-style:none;counter-reset:s}
+.steps li{counter-increment:s;display:flex;gap:10px;align-items:flex-start;font-size:14px;margin-bottom:8px}
+.steps li::before{content:counter(s);flex:none;width:22px;height:22px;border-radius:50%;background:var(--cream2);display:grid;place-items:center;font:900 12px Nunito}
+.cafes{display:grid;gap:12px;margin-top:14px}
+.cafe{display:flex;gap:14px;align-items:center;background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:16px;text-align:left;width:100%;text-decoration:none}
+.cafe .pin{width:52px;height:52px;border-radius:16px;background:var(--cream2);display:grid;place-items:center;font:900 22px Nunito}
+.cafe b{font:800 19px Nunito;display:block}
+.toast{position:fixed;left:16px;right:16px;top:calc(12px + env(safe-area-inset-top));z-index:40;background:var(--brown);color:var(--cream);border-radius:16px;padding:12px 14px;font-weight:600;transform:translateY(-140%);transition:transform .35s var(--ease);max-width:528px;margin:0 auto}
+.toast.on{transform:none}
+.empty{text-align:center;padding:50px 10px;color:var(--muted)}
+.foot{margin:28px 0 0;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"><div class="empty">☕</div></div>
+<div class="bar" id="bar"><button class="btn" id="barBtn"></button></div>
+<div class="veil" id="veil"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+// Public QR menu for Friends. Guests scan the QR on the TV or the table, pick drinks here, and tap "Order in Telegram":
+// the Friends Mini App opens with these drinks already in the cart, where they choose a pickup time and pay.
+// Reads the live menu (club_menu) straight from Supabase with the public, read-only key — prices and photos stay
+// in one place. Prices are re-checked by the server at checkout; nothing here can change an order's price.
+const SB = "https://ohuimaecxllehyqfibmg.supabase.co";
+const SB_KEY = "sb_publishable_9CK4WyVPk9NfYpQTr4XF1g_COp_vxgI"; // publishable key: read-only, active menu rows only (RLS)
+const BOT = "https://t.me/friendscofe_bot";
+const MAX_DRINKS = 3; // same limit as the Mini App's server
+const CAFES = {
+  UWED: { code: "D", uz: "Diplomatiya", ru: "Дипломатия", en: "Diplomatiya", hint: { uz: "JIDU (UWED)", ru: "УМЭД (UWED)", en: "UWED" } },
+  EMU: { code: "E", uz: "Emu", ru: "Ему", en: "Emu", hint: { uz: "EMU universiteti", ru: "Университет EMU", en: "EMU University" } },
+};
+const HOURS = [8, 20], LAST_ORDER_MIN = 35; // pre-orders: Mon–Sat, until 35 min before closing (as on the server)
+
+const W = {
+  uz: { menu: "Menyu", open: "Oldindan buyurtma ochiq", closed: "Oldindan buyurtma Du–Sh 8:00–19:25", closedNote: "Hozir oldindan buyurtma yopiq — menyuni koʻrishingiz mumkin, ichimliklarni esa kassada buyurtma qiling.",
+    how: ["Ichimliklarni tanlang", "Telegramda toʻlang", "Kassadan oling"], from: "", sum: "soʻm", add: "Qoʻshish", added: "Qoʻshildi", size: "Hajmi", qty: "Soni",
+    max: (m) => `Bir buyurtmada ${m} tagacha ichimlik`, bar: (n, s) => `Buyurtma · ${n} · ${s} soʻm`, yourOrder: "Buyurtmangiz", total: "Jami",
+    next: ["Telegramda Friends ilovasi ochiladi — ichimliklar savatda boʻladi", "Olib ketish vaqtini tanlang va onlayn toʻlang", "Tayyor boʻlganda kassadan oling"],
+    tgBtn: "Telegramda buyurtma berish", edit: "Menyuga qaytish", pick: "Qaysi kafedasiz?", change: "Kafeni almashtirish", empty: "Savat boʻsh", err: "Menyuni yuklab boʻlmadi. Internetni tekshirib, qayta urinib koʻring.", retry: "Qayta urinish", bot: "Friends Club botini ochish" },
+  ru: { menu: "Меню", open: "Предзаказ открыт", closed: "Предзаказ Пн–Сб 8:00–19:25", closedNote: "Сейчас предзаказ закрыт — меню можно посмотреть, а напитки заказать на кассе.",
+    how: ["Выберите напитки", "Оплатите в Telegram", "Заберите на кассе"], from: "от", sum: "сум", add: "Добавить", added: "Добавлено", size: "Размер", qty: "Количество",
+    max: (m) => `В одном заказе до ${m} напитков`, bar: (n, s) => `Заказ · ${n} · ${s} сум`, yourOrder: "Ваш заказ", total: "Итого",
+    next: ["Откроется приложение Friends в Telegram — напитки уже в корзине", "Выберите время и оплатите онлайн", "Заберите на кассе, когда будет готово"],
+    tgBtn: "Заказать в Telegram", edit: "Вернуться к меню", pick: "В каком вы кафе?", change: "Сменить кафе", empty: "Корзина пуста", err: "Не удалось загрузить меню. Проверьте интернет и попробуйте ещё раз.", retry: "Ещё раз", bot: "Открыть бот Friends Club" },
+  en: { menu: "Menu", open: "Open for pre-orders", closed: "Pre-orders Mon–Sat 8:00–19:25", closedNote: "Pre-orders are closed right now — browse the menu and order at the till.",
+    how: ["Pick your drinks", "Pay in Telegram", "Collect at the counter"], from: "from", sum: "sum", add: "Add", added: "Added", size: "Size", qty: "Quantity",
+    max: (m) => `Up to ${m} drinks per order`, bar: (n, s) => `Order · ${n} · ${s} sum`, yourOrder: "Your order", total: "Total",
+    next: ["The Friends app opens in Telegram with your drinks in the cart", "Choose a pickup time and pay online", "Collect it at the counter when it's ready"],
+    tgBtn: "Order in Telegram", edit: "Back to the menu", pick: "Which café are you at?", change: "Change café", empty: "Your cart is empty", err: "Couldn't load the menu. Check your connection and try again.", retry: "Try again", bot: "Open the Friends Club bot" },
+};
+const CATN = { hot: { ru: "Горячий кофе", uz: "Issiq qahva", en: "Hot coffee" }, iced: { ru: "Холодный кофе", uz: "Sovuq qahva", en: "Iced coffee" }, noncoffee: { ru: "Не кофе", uz: "Qahvasiz", en: "No coffee" }, tea: { ru: "Чай", uz: "Choy", en: "Tea" }, lemon: { ru: "Лимонады", uz: "Limonadlar", en: "Lemonades" }, shake: { ru: "Фраппе и смузи", uz: "Frappe va smuzi", en: "Frappe & smoothies" }, detox: { ru: "Детокс", uz: "Detoks", en: "Detox" } };
+const CAT_ORDER = ["hot", "iced", "noncoffee", "tea", "lemon", "shake", "detox"];
+
+/* ---------- state ---------- */
+const $ = (s) => document.querySelector(s);
+const qs = new URLSearchParams(location.search);
+const store = { get(k) { try { return localStorage.getItem(k); } catch { return null; } }, set(k, v) { try { localStorage.setItem(k, v); } catch {} } };
+const pickLang = () => { const q = qs.get("lang"), s = store.get("fr_lang"), n = (navigator.language || "").slice(0, 2); return W[q] ? q : W[s] ? s : n === "ru" ? "ru" : n === "en" ? "en" : "uz"; };
+let L = pickLang(), cafe = (qs.get("cafe") || qs.get("c") || "").toUpperCase(), menu = [], cart = [], curCat = null;
+if (cafe === "D") cafe = "UWED"; if (cafe === "E") cafe = "EMU";
+if (!CAFES[cafe]) cafe = null;
+const t = () => W[L];
+const fmt = (n) => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+const nm = (it) => esc((L === "uz" ? it.name_uz : L === "en" ? (it.name_en || it.name_ru) : it.name_ru).replace("★ ", ""));
+const ds = (it) => esc((L === "uz" ? it.desc_uz : L === "en" ? it.desc_en : it.desc_ru) || "");
+const find = (id) => menu.find((m) => m.id === id);
+const count = () => cart.reduce((n, x) => n + x.qty, 0);
+const priceOf = (x) => { const it = find(x.id); if (!it) return 0; const k = it.sizes.length ? it.sizes.indexOf(x.size) : 0; return it.prices[k] ?? it.prices[0]; };
+const total = () => cart.reduce((s, x) => s + priceOf(x) * x.qty, 0);
+const pic = (it) => it.photo_url ? `<img src="../${esc(it.photo_url)}" alt="" loading="lazy">` : "☕";
+function toast(msg) { const el = $("#toast"); el.textContent = msg; el.classList.add("on"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("on"), 2400); }
+function openNow() {
+  const d = new Date(Date.now() + 5 * 3600_000); // Tashkent time
+  const m = d.getUTCHours() * 60 + d.getUTCMinutes();
+  return d.getUTCDay() !== 0 && m >= HOURS[0] * 60 && m <= HOURS[1] * 60 - LAST_ORDER_MIN;
+}
+const saveCart = () => cafe && store.set("fr_cart_" + cafe, JSON.stringify(cart));
+function loadCart() {
+  try { cart = JSON.parse(store.get("fr_cart_" + cafe) || "[]").filter((x) => { const it = find(x.id); return it && (it.sizes.length ? it.sizes.includes(x.size) : x.size === null); }); } catch { cart = []; }
+  while (count() > MAX_DRINKS) { const last = cart[cart.length - 1]; last.qty--; if (!last.qty) cart.pop(); }
+}
+
+// Link that opens the Friends Mini App with this cart: start param "cD_latte-M-1_imatcha-0-2"
+function tgLink() {
+  const p = "c" + CAFES[cafe].code + "_" + cart.map((x) => `${x.id}-${x.size ?? 0}-${x.qty}`).join("_");
+  return `${BOT}?startapp=${encodeURIComponent(p)}`;
+}
+
+/* ---------- screens ---------- */
+function langs() { return `<div class="langs">${["uz", "ru", "en"].map((l) => `<button class="${l === L ? "on" : ""}" data-l="${l}">${l.toUpperCase()}</button>`).join("")}</div>`; }
+function renderPick() {
+  document.title = "Friends — " + t().menu;
+  $("#app").innerHTML = `<div class="top"><div class="logo">Friends</div>${langs()}</div>
+    <h2 style="font-size:24px;margin-top:18px">${t().pick}</h2>
+    <div class="cafes">${Object.entries(CAFES).map(([id, c]) => `<a class="cafe" href="?cafe=${id}"><div class="pin">${c[L][0]}</div><div><b>${c[L]}</b><small class="note">${c.hint[L]}</small></div></a>`).join("")}</div>`;
+  bar();
+}
+function renderMenu() {
+  const c = CAFES[cafe], open = openNow();
+  document.title = `Friends · ${c[L]} — ${t().menu}`;
+  const cats = CAT_ORDER.filter((k) => menu.some((m) => m.cat === k)).concat([...new Set(menu.map((m) => m.cat))].filter((k) => !CAT_ORDER.includes(k) && CATN[k]));
+  $("#app").innerHTML = `<div class="top"><div class="logo">Friends</div>${langs()}</div>
+    <div class="place"><div><b>📍 ${c[L]}</b><div class="note"><span class="dot" style="background:${open ? "var(--ok)" : "var(--err)"}"></span>${open ? t().open : t().closed}</div></div><a class="switch" href="./">${t().change}</a></div>
+    ${open ? `<div class="how">${t().how.map((h, i) => `<div><b>${i + 1}</b>${h}</div>`).join("")}</div>` : `<div class="closed">⏰ ${t().closedNote}</div>`}
+    <div class="mhead"><div class="chips">${cats.map((k) => `<button class="chip ${k === curCat ? "on" : ""}" data-cat="${k}">${CATN[k][L]}</button>`).join("")}</div></div>
+    ${cats.map((k) => `<h2 class="sect" id="s-${k}">${CATN[k][L]}</h2><div class="grid">${menu.filter((m) => m.cat === k).map((m) => {
+      const q = cart.filter((x) => x.id === m.id).reduce((n, x) => n + x.qty, 0);
+      return `<button class="item" data-id="${m.id}"><div class="ph">${pic(m)}${q ? `<span class="q">${q}</span>` : ""}</div><div class="tx"><b>${nm(m)}</b><small>${ds(m)}</small><span class="pr">${m.sizes.length > 1 && t().from ? t().from + " " : ""}${fmt(m.prices[0])} ${t().sum}</span></div></button>`;
+    }).join("")}</div>`).join("")}
+    <div class="foot"><a class="note" href="${BOT}">${t().bot} →</a></div>`;
+  bar();
+}
+function bar() {
+  const on = !!cafe && count() > 0 && !$("#sheet").classList.contains("on");
+  $("#bar").classList.toggle("on", on);
+  if (on) $("#barBtn").textContent = t().bar(count(), fmt(total()));
+}
+
+/* ---------- drink sheet ---------- */
+let sItem = null, sSize = null, sQty = 1, sMode = "item";
+function openSheet() { $("#veil").classList.add("on"); $("#sheet").classList.add("on"); bar(); }
+function closeSheet() { $("#veil").classList.remove("on"); $("#sheet").classList.remove("on"); bar(); }
+function itemSheet(id) {
+  const it = find(id); if (!it) return;
+  sItem = it; sSize = it.sizes[Math.min(1, it.sizes.length - 1)] ?? null; sQty = 1; sMode = "item";
+  drawItem(); openSheet();
+}
+function drawItem() {
+  const it = sItem, k = it.sizes.length ? it.sizes.indexOf(sSize) : 0;
+  $("#sheet").innerHTML = `<button class="x" data-close="1" aria-label="×">✕</button><div class="ph">${pic(it)}</div><div class="in"><h3>${nm(it)}</h3><p>${ds(it)}</p>
+    ${it.sizes.length ? `<div class="label">${t().size}</div><div class="seg">${it.sizes.map((s, i) => `<button class="${s === sSize ? "on" : ""}" data-size="${esc(s)}">${esc(s)}<small>${fmt(it.prices[i])} ${t().sum}</small></button>`).join("")}</div>` : ""}
+    <div class="qty"><b style="font:800 17px Nunito">${t().qty}</b><div class="step"><button data-q="-1" aria-label="−">−</button><span>${sQty}</span><button data-q="1" aria-label="+">+</button></div></div>
+    <button class="btn" id="addBtn">${t().add} · ${fmt((it.prices[k] ?? it.prices[0]) * sQty)} ${t().sum}</button></div>`;
+}
+function addToCart() {
+  if (count() + sQty > MAX_DRINKS) return toast(t().max(MAX_DRINKS));
+  const same = cart.find((x) => x.id === sItem.id && x.size === sSize);
+  if (same) same.qty += sQty; else cart.push({ id: sItem.id, size: sSize, qty: sQty });
+  saveCart(); toast(`${t().added}: ${nm(sItem).replace(/&amp;/g, "&")}`);
+  closeSheet(); renderMenu();
+}
+function cartSheet() {
+  sMode = "cart";
+  if (!cart.length) { closeSheet(); return; }
+  const open = openNow();
+  $("#sheet").innerHTML = `<button class="x" data-close="1" aria-label="×">✕</button><div class="in" style="padding-top:22px"><h3>${t().yourOrder}</h3><div class="note">📍 ${CAFES[cafe][L]}</div>
+    ${cart.map((x, i) => { const it = find(x.id); return `<div class="line"><div class="ph">${pic(it)}</div><div class="nm"><b>${nm(it)}${x.size ? " " + esc(x.size) : ""}</b><small>${fmt(priceOf(x) * x.qty)} ${t().sum}</small></div><div class="step"><button data-cq="-1" data-i="${i}">−</button><span>${x.qty}</span><button data-cq="1" data-i="${i}">+</button></div></div>`; }).join("")}
+    <div class="total"><span>${t().total}</span><span>${fmt(total())} ${t().sum}</span></div>
+    <div class="note">${t().max(MAX_DRINKS)}</div>
+    ${open ? `<ol class="steps">${t().next.map((s) => `<li>${s}</li>`).join("")}</ol>` : `<div class="closed" style="margin:12px 0 16px">⏰ ${t().closedNote}</div>`}
+    <a class="btn" id="tgBtn" href="${tgLink()}" ${open ? "" : 'aria-disabled="true"'}>✈️ ${t().tgBtn}</a>
+    <button class="btn ghost" data-close="1" style="margin-top:10px">${t().edit}</button></div>`;
+  openSheet();
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click", (e) => {
+  const el = e.target.closest("button"); if (!el) return;
+  if (el.dataset.l) { L = el.dataset.l; store.set("fr_lang", L); document.documentElement.lang = L; if (sMode === "cart" && $("#sheet").classList.contains("on")) cartSheet(); else if ($("#sheet").classList.contains("on")) drawItem(); return cafe ? renderMenu() : renderPick(); }
+  if (el.dataset.close) return closeSheet();
+  if (el.dataset.cat) { curCat = el.dataset.cat; document.getElementById("s-" + curCat)?.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
+  if (el.classList.contains("item")) return itemSheet(el.dataset.id);
+  if (el.dataset.size) { sSize = el.dataset.size; return drawItem(); }
+  if (el.dataset.q) { sQty = Math.max(1, Math.min(MAX_DRINKS, sQty + Number(el.dataset.q))); return drawItem(); }
+  if (el.id === "addBtn") return addToCart();
+  if (el.id === "barBtn") return cartSheet();
+  if (el.dataset.cq) {
+    const x = cart[Number(el.dataset.i)], d = Number(el.dataset.cq);
+    if (d > 0 && count() + d > MAX_DRINKS) return toast(t().max(MAX_DRINKS));
+    x.qty += d; if (x.qty <= 0) cart.splice(Number(el.dataset.i), 1);
+    saveCart(); renderMenu(); return cartSheet();
+  }
+});
+$("#veil").addEventListener("click", closeSheet);
+document.addEventListener("keydown", (e) => { if (e.key === "Escape") closeSheet(); });
+window.addEventListener("scroll", () => {
+  let cur = null;
+  document.querySelectorAll(".sect").forEach((s) => { if (s.getBoundingClientRect().top < 120) cur = s.id.slice(2); });
+  if (cur && cur !== curCat) { curCat = cur; document.querySelectorAll(".chip").forEach((ch) => ch.classList.toggle("on", ch.dataset.cat === cur)); document.querySelector(`.chip[data-cat="${cur}"]`)?.scrollIntoView({ inline: "center", block: "nearest" }); }
+}, { passive: true });
+
+/* ---------- start ---------- */
+async function start() {
+  document.documentElement.lang = L;
+  if (!cafe) return renderPick();
+  try {
+    const r = await fetch(`${SB}/rest/v1/club_menu?select=id,cat,sort,name_uz,name_ru,name_en,desc_uz,desc_ru,desc_en,sizes,prices,photo_url&cafe=eq.${cafe}&active=eq.true&order=sort`, { headers: { apikey: SB_KEY } });
+    if (!r.ok) throw new Error(String(r.status));
+    menu = await r.json();
+  } catch {
+    $("#app").innerHTML = `<div class="top"><div class="logo">Friends</div>${langs()}</div><div class="empty"><div style="font-size:44px">☕</div><p>${t().err}</p><button class="btn ghost" onclick="location.reload()">${t().retry}</button></div>`;
+    return;
+  }
+  loadCart(); renderMenu();
+}
+start();
+</script>
+</body>
+</html>

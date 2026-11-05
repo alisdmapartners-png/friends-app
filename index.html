@@ -341,8 +341,41 @@ function updateMain() {
 }
 const cafeOpen = () => D.cafes.find((c) => c.id === cafe)?.open;
 
+/* ---------- cart handed over from the public QR menu (menu/index.html) ---------- */
+// start param "cD_latte-M-1_imatcha-0-2": c + café code (D = UWED, E = EMU), then id-size-qty per drink ("0" = no size)
+let pending = null;
+function cartFromStart(sp) {
+  const m = /^c([DE])_([A-Za-z0-9_-]{1,400})$/.exec(sp || "");
+  if (!m) return null;
+  const cf = m[1] === "D" ? "UWED" : "EMU", out = [];
+  let n = 0;
+  for (const part of m[2].split("_")) {
+    const [id, sz, q] = part.split("-");
+    const it = D.menu.find((x) => x.cafe === cf && x.id === id);
+    if (!it) continue;
+    const size = it.sizes.length ? (it.sizes.includes(sz) ? sz : null) : null;
+    if (it.sizes.length && !size) continue;
+    const qty = Math.min(Math.max(1, Number(q) || 1), D.maxDrinks - n);
+    if (qty <= 0) break;
+    const same = out.find((x) => x.id === id && x.size === size);
+    if (same) same.qty += qty; else out.push({ id, size, qty });
+    n += qty;
+  }
+  return out.length ? { cafe: cf, items: out } : null;
+}
+// Opens the checkout with the guest's picks once they can order (joined, name saved, no other active order)
+function openPending() {
+  if (!pending || !D?.joined || D.card?.needName) return false;
+  if (D.active) { pending = null; toast(t().err.active); return false; }
+  cafe = pending.cafe; cart = pending.items; pending = null; slot = null;
+  stack = ["home", "menu", "cart"]; renderMenu(); go("cart", false); renderCart();
+  try { tg.BackButton.show(); } catch {}
+  return true;
+}
+
 /* ---------- home ---------- */
 function renderHome() {
+  if (pending && openPending()) return;
   $("#langs").innerHTML = ["uz", "ru", "en"].map((l) => `<button class="${l === L ? "on" : ""}" data-l="${l}">${l.toUpperCase()}</button>`).join("");
   const c = D.card;
   if (c) {
@@ -600,7 +633,9 @@ document.addEventListener("keydown", (e) => { if (e.key === "Enter" && e.target.
   }
   L = D.lang; document.documentElement.lang = L;
   const sp = tg?.initDataUnsafe?.start_param || new URLSearchParams(location.search).get("start") || "";
-  if (sp === "menu") { renderMenu(); stack = ["home", "menu"]; go("menu", false); try { tg.BackButton.show(); } catch {} }
+  pending = cartFromStart(sp);
+  if (pending) { if (!openPending()) { go("home", false); if (!D.joined || D.card?.needName) toast(t().err[D.joined ? "no_name" : "not_joined"]); } }
+  else if (sp === "menu") { renderMenu(); stack = ["home", "menu"]; go("menu", false); try { tg.BackButton.show(); } catch {} }
   else if (sp === "order" && D.joined && !D.active) { renderCafes(); stack = ["home", "cafes"]; go("cafes", false); try { tg.BackButton.show(); } catch {} }
   else go("home", false);
   startPoll(); checkStatus();
