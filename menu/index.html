@@ -113,7 +113,8 @@ a{color:inherit}
 const SB = "https://ohuimaecxllehyqfibmg.supabase.co";
 const SB_KEY = "sb_publishable_9CK4WyVPk9NfYpQTr4XF1g_COp_vxgI"; // publishable key: read-only, active menu rows only (RLS)
 const BOT = "https://t.me/friendscofe_bot";
-const MAX_DRINKS = 3; // same limit as the Mini App's server
+const MAX_DRINKS = 3, MAX_ITEMS = 10; // same limits as the Mini App's server: 3 drinks, food on top, 10 items in all
+const FOOD = ["food", "bakery"];
 const CAFES = {
   UWED: { code: "D", uz: "Diplomatiya", ru: "Дипломатия", en: "Diplomatiya", hint: { uz: "JIDU (UWED)", ru: "УМЭД (UWED)", en: "UWED" } },
   EMU: { code: "E", uz: "Emu", ru: "Ему", en: "Emu", hint: { uz: "EMU universiteti", ru: "Университет EMU", en: "EMU University" } },
@@ -138,7 +139,8 @@ const W = {
     tgBtn: "Order in Telegram", edit: "Back to the menu", pick: "Which café are you at?", change: "Change café", empty: "Your cart is empty", err: "Couldn't load the menu. Check your connection and try again.", retry: "Try again", bot: "Open the Friends Club bot" },
 };
 const CATN = { hot: { ru: "Горячий кофе", uz: "Issiq qahva", en: "Hot coffee" }, iced: { ru: "Холодный кофе", uz: "Sovuq qahva", en: "Iced coffee" }, noncoffee: { ru: "Не кофе", uz: "Qahvasiz", en: "No coffee" }, tea: { ru: "Чай", uz: "Choy", en: "Tea" }, lemon: { ru: "Лимонады", uz: "Limonadlar", en: "Lemonades" }, shake: { ru: "Фраппе и смузи", uz: "Frappe va smuzi", en: "Frappe & smoothies" }, detox: { ru: "Детокс", uz: "Detoks", en: "Detox" } };
-const CAT_ORDER = ["hot", "iced", "noncoffee", "tea", "lemon", "shake", "detox"];
+const CAT_ORDER = ["hot", "iced", "noncoffee", "tea", "lemon", "shake", "detox", "food", "bakery"];
+Object.assign(CATN, { food: { ru: "Еда", uz: "Taomlar", en: "Food" }, bakery: { ru: "Выпечка", uz: "Pishiriqlar", en: "Bakery" } });
 
 /* ---------- state ---------- */
 const $ = (s) => document.querySelector(s);
@@ -155,6 +157,10 @@ const nm = (it) => esc((L === "uz" ? it.name_uz : L === "en" ? (it.name_en || it
 const ds = (it) => esc((L === "uz" ? it.desc_uz : L === "en" ? it.desc_en : it.desc_ru) || "");
 const find = (id) => menu.find((m) => m.id === id);
 const count = () => cart.reduce((n, x) => n + x.qty, 0);
+const isFood = (id) => FOOD.includes(menu.find((m) => m.id === id)?.cat);
+const drinks = () => cart.reduce((n, x) => n + (isFood(x.id) ? 0 : x.qty), 0);
+// can q more of this be added? drinks are limited (barista time), food only by the total
+const room = (id, q) => (isFood(id) ? count() + q <= MAX_ITEMS : drinks() + q <= MAX_DRINKS && count() + q <= MAX_ITEMS);
 const priceOf = (x) => { const it = find(x.id); if (!it) return 0; const k = it.sizes.length ? it.sizes.indexOf(x.size) : 0; return it.prices[k] ?? it.prices[0]; };
 const total = () => cart.reduce((s, x) => s + priceOf(x) * x.qty, 0);
 const pic = (it) => it.photo_url ? `<img src="../${esc(it.photo_url)}" alt="" loading="lazy">` : "☕";
@@ -167,7 +173,7 @@ function openNow() {
 const saveCart = () => cafe && store.set("fr_cart_" + cafe, JSON.stringify(cart));
 function loadCart() {
   try { cart = JSON.parse(store.get("fr_cart_" + cafe) || "[]").filter((x) => { const it = find(x.id); return it && (it.sizes.length ? it.sizes.includes(x.size) : x.size === null); }); } catch { cart = []; }
-  while (count() > MAX_DRINKS) { const last = cart[cart.length - 1]; last.qty--; if (!last.qty) cart.pop(); }
+  while (drinks() > MAX_DRINKS || count() > MAX_ITEMS) { const last = cart[cart.length - 1]; last.qty--; if (!last.qty) cart.pop(); }
 }
 
 // Link that opens the Friends Mini App with this cart: start param "cD_latte-M-1_imatcha-0-2"
@@ -223,7 +229,7 @@ function drawItem() {
     <button class="btn" id="addBtn">${t().add} · ${fmt((it.prices[k] ?? it.prices[0]) * sQty)} ${t().sum}</button></div>`;
 }
 function addToCart() {
-  if (count() + sQty > MAX_DRINKS) return toast(t().max(MAX_DRINKS));
+  if (!room(sItem.id, sQty)) return toast(t().max(MAX_DRINKS));
   const same = cart.find((x) => x.id === sItem.id && x.size === sSize);
   if (same) same.qty += sQty; else cart.push({ id: sItem.id, size: sSize, qty: sQty });
   saveCart(); toast(`${t().added}: ${nm(sItem).replace(/&amp;/g, "&")}`);
@@ -251,12 +257,12 @@ document.addEventListener("click", (e) => {
   if (el.dataset.cat) { curCat = el.dataset.cat; document.getElementById("s-" + curCat)?.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
   if (el.classList.contains("item")) return itemSheet(el.dataset.id);
   if (el.dataset.size) { sSize = el.dataset.size; return drawItem(); }
-  if (el.dataset.q) { sQty = Math.max(1, Math.min(MAX_DRINKS, sQty + Number(el.dataset.q))); return drawItem(); }
+  if (el.dataset.q) { sQty = Math.max(1, Math.min(isFood(sItem.id) ? MAX_ITEMS : MAX_DRINKS, sQty + Number(el.dataset.q))); return drawItem(); }
   if (el.id === "addBtn") return addToCart();
   if (el.id === "barBtn") return cartSheet();
   if (el.dataset.cq) {
     const x = cart[Number(el.dataset.i)], d = Number(el.dataset.cq);
-    if (d > 0 && count() + d > MAX_DRINKS) return toast(t().max(MAX_DRINKS));
+    if (d > 0 && !room(x.id, d)) return toast(t().max(MAX_DRINKS));
     x.qty += d; if (x.qty <= 0) cart.splice(Number(el.dataset.i), 1);
     saveCart(); renderMenu(); return cartSheet();
   }
